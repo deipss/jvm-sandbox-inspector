@@ -5,29 +5,74 @@ import com.alibaba.jvm.sandbox.api.event.Event;
 import com.alibaba.jvm.sandbox.api.event.ReturnEvent;
 import com.alibaba.jvm.sandbox.api.event.ThrowsEvent;
 import com.alibaba.jvm.sandbox.api.listener.EventListener;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
+import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
+import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
 
+@AllArgsConstructor
+@Slf4j
 public abstract class BaseEventListener implements EventListener {
+
+    protected boolean entrance;
+
+    protected String protocol;
+
     @Override
     public void onEvent(Event event) throws Throwable {
-        switch (event.type) {
-            case BEFORE:
-                doBefore((BeforeEvent) event);
-                break;
-            case RETURN:
-                doReturn((ReturnEvent) event);
-                break;
-            case THROWS:
-                doThrow((ThrowsEvent) event);
-                break;
-            default:
-                break;
+        try {
+            switch (event.type) {
+                case BEFORE:
+                    doBefore((BeforeEvent) event);
+                    transportSpan((BeforeEvent) event);
+                    break;
+                case RETURN:
+                    doReturn((ReturnEvent) event);
+                    if (entrance) {
+                        Tracer.end(protocol, ((ReturnEvent) event).invokeId);
+
+                    }
+                    break;
+                case THROWS:
+                    doThrow((ThrowsEvent) event);
+                    if (entrance) {
+                        Tracer.end(protocol, ((ThrowsEvent) event).invokeId);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            log.error("error ", e);
         }
     }
 
-    abstract public void doBefore(BeforeEvent event);
-    abstract public void doReturn(ReturnEvent event);
-    abstract public void doThrow(ThrowsEvent event);
-    abstract public Invocation initInvocation(BeforeEvent event);
+    public void doBefore(BeforeEvent event) {
+        Invocation invocation = initInvocation(event);
+        InvocationCache.put(event.invokeId, invocation);
+    }
+
+    public void doReturn(ReturnEvent event) {
+        Invocation invocation = InvocationCache.get(event.invokeId);
+        invocation.setResponse(event.object);
+    }
+
+    public void doThrow(ThrowsEvent event) {
+        Invocation invocation = InvocationCache.get(event.invokeId);
+        invocation.setThrowable(event.throwable);
+        invocation.setThrowableMsg(event.throwable.getMessage());
+        invocation.setThrowableClass(event.throwable.getClass().getCanonicalName());
+    }
+
+    public Invocation initInvocation(BeforeEvent event) {
+        Invocation invocation = new Invocation();
+        invocation.setInnerEntrace(entrance);
+        invocation.setProtocol(protocol);
+        invocation.setTraceId(Tracer.get());
+        return invocation;
+    }
+
+    public abstract void transportSpan(BeforeEvent event);
 }
 

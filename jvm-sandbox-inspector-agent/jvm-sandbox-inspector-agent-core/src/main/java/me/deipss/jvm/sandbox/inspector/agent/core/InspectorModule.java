@@ -9,11 +9,13 @@ import com.alibaba.jvm.sandbox.api.resource.LoadedClassDataSource;
 import com.alibaba.jvm.sandbox.api.resource.ModuleEventWatcher;
 import com.alibaba.jvm.sandbox.api.resource.ModuleManager;
 import me.deipss.jvm.sandbox.inspector.agent.api.Constant;
+import me.deipss.jvm.sandbox.inspector.agent.core.plugin.jdbc.JdbcPlugin;
+import org.kohsuke.MetaInfServices;
 
 import javax.annotation.Resource;
 import javax.xml.ws.RequestWrapper;
 
-
+@MetaInfServices(Module.class)
 @Information(id = "Inspector", author = "deipss666@gmail.com", version = Constant.version)
 public class InspectorModule implements Module, ModuleLifecycle {
     @Resource
@@ -50,7 +52,8 @@ public class InspectorModule implements Module, ModuleLifecycle {
 
     @Override
     public void loadCompleted() {
-
+        JdbcPlugin jdbcPlugin = new JdbcPlugin();
+        jdbcPlugin.watch(moduleEventWatcher);
     }
 
     @Command("manageMock")

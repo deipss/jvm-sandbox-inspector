@@ -33,7 +33,9 @@
         <revision>1.0-SNAPSHOT</revision>
         <sandbox.api.version>1.4.0</sandbox.api.version>
         <ttl.version>2.10.2</ttl.version>
-
+        <metainf-services.version>1.8</metainf-services.version>
+        <org.slf4j.version>1.7.24</org.slf4j.version>
+        <logback.version>1.2.1</logback.version>
 
     </properties>
 
@@ -133,11 +135,27 @@
                 <artifactId>transmittable-thread-local</artifactId>
                 <version>${ttl.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>${metainf-services.version}</version>
+                <scope>compile</scope>
+            </dependency>
             <!--log-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-log4j2</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${org.slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
             </dependency>
             <!--dev-->
             <dependency>
