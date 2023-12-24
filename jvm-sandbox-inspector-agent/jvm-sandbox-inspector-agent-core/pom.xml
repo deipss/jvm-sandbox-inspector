@@ -59,6 +59,8 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
+                            <finalName>inspector-module</finalName>
+                            <encoding>UTF-8</encoding>
                         </configuration>
                     </execution>
                 </executions>
