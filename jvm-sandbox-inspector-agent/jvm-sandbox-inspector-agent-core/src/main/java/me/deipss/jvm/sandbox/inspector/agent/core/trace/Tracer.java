@@ -1,12 +1,13 @@
 package me.deipss.jvm.sandbox.inspector.agent.core.trace;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
-import com.sun.media.jfxmedia.logging.Logger;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Objects;
 
 @Slf4j
@@ -25,7 +26,7 @@ public class Tracer {
 
 
     private static String initTraceId(int invokeId) {
-        return "ip" + System.currentTimeMillis() + invokeId;
+        return getLocalIp() + "_" + System.currentTimeMillis() + "_" + invokeId;
     }
 
     public static void start(int invokeId, String protocol) {
@@ -56,6 +57,17 @@ public class Tracer {
             return true;
         }
         return false;
+    }
+
+
+    public static String getLocalIp() {
+        String ip;
+        try {
+            ip = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            ip = "127.0.0.1";
+        }
+        return ip;
     }
 
 }

@@ -95,11 +95,12 @@ public class Invocation {
      */
     private Long end;
 
+    private String ip;
+
     /**
      * 类加载器
      */
     private transient ClassLoader classLoader;
-
 
     private transient Object[] request;
 

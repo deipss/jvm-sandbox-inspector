@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
+import me.deipss.jvm.sandbox.inspector.agent.core.util.InvocationSendUtil;
 
 @AllArgsConstructor
 @Slf4j
@@ -24,6 +25,9 @@ public abstract class BaseEventListener implements EventListener {
         try {
             switch (event.type) {
                 case BEFORE:
+                    if(entrance){
+                        Tracer.start(((BeforeEvent) event).invokeId,protocol);
+                    }
                     doBefore((BeforeEvent) event);
                     transportSpan((BeforeEvent) event);
                     break;
@@ -31,14 +35,15 @@ public abstract class BaseEventListener implements EventListener {
                     doReturn((ReturnEvent) event);
                     if (entrance) {
                         Tracer.end(protocol, ((ReturnEvent) event).invokeId);
-
                     }
+                    sendInvocationReturn((ReturnEvent) event);
                     break;
                 case THROWS:
                     doThrow((ThrowsEvent) event);
                     if (entrance) {
                         Tracer.end(protocol, ((ThrowsEvent) event).invokeId);
                     }
+                    sendInvocationThrow((ThrowsEvent) event);
                     break;
                 default:
                     break;
@@ -69,9 +74,22 @@ public abstract class BaseEventListener implements EventListener {
         Invocation invocation = new Invocation();
         invocation.setInnerEntrace(entrance);
         invocation.setProtocol(protocol);
+        invocation.setIndex(event.invokeId);
+        invocation.setIp(Tracer.getLocalIp());
         invocation.setTraceId(Tracer.get());
         return invocation;
     }
+
+    public void sendInvocationReturn(ReturnEvent event) {
+        Invocation invocation = InvocationCache.remove(event.invokeId);
+        InvocationSendUtil.send(invocation);
+    }
+
+    public void sendInvocationThrow(ThrowsEvent event) {
+        Invocation invocation = InvocationCache.remove(event.invokeId);
+        InvocationSendUtil.send(invocation);
+    }
+
 
     public abstract void transportSpan(BeforeEvent event);
 }
