@@ -31,7 +31,11 @@ final int invokeId=invokeIdSequencer.getAndIncrement();
 
 ```
 
-# 类似Okhttp等http通信组件，调用一些关键接口，如微信支付，不能传递链路信息，存在拉起支付失败的风险
+# 3. 取消http header 参数传递
+
+类似Okhttp等http通信组件，调用一些关键接口，如微信支付，不能传递链路信息，存在拉起支付失败的风险
 
 
-# 
+# 4. IO流的复制
+
+对于IO流增强时，注意提前将IO复制，不然会再现NPE问题
