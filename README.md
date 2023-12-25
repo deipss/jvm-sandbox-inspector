@@ -8,30 +8,8 @@
 - 使用手机通过Http请求到交易线下单，交易会查询用户的信息以及门店的营业状态，再防重验证后，创建订单。
 - 拿到交易订单号，去拉起支付的支付界面。
 
-```mermaid
-flowchart TB
-    consumer --1.http create order--> trade-facade
-    consumer --2.http pay--> payment-facade
-    subgraph trade
-        trade-facade --1.1 query store status(open/close)--> store-facade
-        trade-facade --1.2 query user information--> user-facade
-        trade-facade --1.3 order exists?--> trade-query
-        trade-facade --1.4 create order --> trade-order
-    end
-    subgraph payment
-        payment-facade --2.1 query order--> payment-platform
-        payment-platform --2.1.1 verify order --> trade-facade
-    end
-    subgraph store
-        store-facade --1.1.1 query store status--> store-index
-        store-index --1.1.1.1 query es--> es[\Elastic Search\]
-    end
-    subgraph user
-        user-facade --1.2.1……--> user-core
-        user-core --1.2.1.1……--> mysql[(mysql)]
-    end
+![flow.png](doc%2Fimg%2Fflow.png)
 
-```
 ## 需求
 - 微服务架构下，除了自已的业务线，外部的业务不了解，对接时，参数不对时，都要去找日志，或是arthas watch 一下方法的调用
 - user-core用户，常用的测试账号过期了，如何快速`MOCK接口`结果是检查通过，而不是过期
