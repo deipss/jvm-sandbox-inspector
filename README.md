@@ -27,11 +27,9 @@ flowchart TB
         store-index --1.1.1.1 query es--> es[\Elastic Search\]
     end
     subgraph user
-        user-facade --1.2.1--> user-core
-        user-core --1.2.1.1--> mysql[(mysql)]
+        user-facade --1.2.1……--> user-core
+        user-core --1.2.1.1……--> mysql[(mysql)]
     end
-    style consumer fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-    style user-core fill:#FF0000
 
 ```
 ## 需求
@@ -47,11 +45,18 @@ flowchart TB
 
 # 源代码模块介绍
 
-- jvm-sandbox-inspector-agent 使用jvm-sandbox，实现一个JavaAgent模块，具体部署方法见[jvm-sandbox快速开始](https://github.com/alibaba/jvm-sandbox/wiki/USER-QUICK-START)
-- jvm-sandbox-inspector-data 数据同步模块（暂未实现），一般用于消费kafka的消息体（消息体中包含接口参数、响应等信息）保存到存储引擎中（ElasticSearch）。`不采样的话，数据量很大`
-- jvm-sandbox-inspector-web 用户操作界面模块，查看链路，数据回放，上报配置等
-- jvm-sandbox-inspector-debug-consumer 服务调试模块，服务消费者（rocketmq consumer，dubbo consumer，okhttp）
-- jvm-sandbox-inspector-debug-provider 服务调试模块，服务提供者（rocketmq sent，dubbo provider，restful 接口）
+| module                               | 用途 |
+|--------------------------------------|----|
+| jvm-sandbox-inspector-agent          | 使用jvm-sandbox，实现一个JavaAgent模块，具体部署方法见[jvm-sandbox快速开始](https://github.com/alibaba/jvm-sandbox/wiki/USER-QUICK-START)|
+| jvm-sandbox-inspector-data           | 数据同步模块（暂未实现），一般用于消费kafka的消息体（消息体中包含接口参数、响应等信息）保存到存储引擎中（ElasticSearch）。`不采样的话，数据量很大`   |
+| jvm-sandbox-inspector-web            | 用户操作界面模块，查看链路，数据回放，上报配置等   |
+| jvm-sandbox-inspector-debug-consumer | 服务调试模块，服务消费者（rocketmq consumer，dubbo consumer，okhttp）   |
+| jvm-sandbox-inspector-debug-provider | 服务调试模块，服务提供者（rocketmq sent，dubbo provider，restful 接口）   |
+
+ 
+ 
+ 
+ 
 
 # 
 
