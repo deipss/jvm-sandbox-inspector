@@ -22,6 +22,8 @@ public class JdbcPlugin extends BasePlugin {
         new EventWatchBuilder(watcher)
                 .onClass("java.sql.Statement").includeBootstrap().includeSubClasses()
                 .onBehavior("execute")
+                .onClass("java.sql.PreparedStatement").includeBootstrap().includeSubClasses()
+                .onBehavior("execute")
                 .onWatch(new JdbcEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
     }
 }

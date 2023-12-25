@@ -18,8 +18,9 @@ public class HttpPlugin extends BasePlugin {
     @Override
     public void watch(ModuleEventWatcher watcher) {
         new EventWatchBuilder(watcher)
-                .onClass("java.sql.Statement").includeBootstrap().includeSubClasses()
-                .onBehavior("execute")
+                .onClass("javax.servlet.http.HttpServlet").includeBootstrap().includeSubClasses()
+                .onBehavior("service")
+                .withParameterTypes("javax.servlet.http.HttpServletRequest", "javax.servlet.http.HttpServletResponse")
                 .onWatch(new HttpEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
     }
 }

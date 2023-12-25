@@ -16,14 +16,8 @@ public class RocketMqSendPlugin extends BasePlugin {
     @Override
     public void watch(ModuleEventWatcher watcher) {
         new EventWatchBuilder(watcher)
-                .onClass("org.apache.dubbo.rpc.filter.ConsumerContextFilter$ConsumerContextListener").includeBootstrap()
-                .onBehavior("onResponse")
-                .onClass("org.apache.dubbo.rpc.filter.ConsumerContextFilter").includeBootstrap()
-                .onBehavior("invoke")
-                .onClass("org.apache.dubbo.rpc.cluster.filter.support.ConsumerContextFilter").includeBootstrap()
-                .onBehavior("onResponse")
-                .onClass("org.apache.dubbo.rpc.cluster.filter.support.ConsumerContextFilter").includeBootstrap()
-                .onBehavior("invoke")
+                .onClass("org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl").includeBootstrap()
+                .onBehavior("sendDefaultImpl")
                 .onWatch(new RocketMqSendEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
     }
 }

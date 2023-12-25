@@ -16,12 +16,12 @@ public class DubboConsumerPlugin extends BasePlugin {
     @Override
     public void watch(ModuleEventWatcher watcher) {
         new EventWatchBuilder(watcher)
-                .onClass("org.apache.dubbo.rpc.filter.ConsumerContextFilter$ConsumerContextListener").includeBootstrap()
-                .onBehavior("onResponse")
+                // dubbo 2.0+
                 .onClass("org.apache.dubbo.rpc.filter.ConsumerContextFilter").includeBootstrap()
                 .onBehavior("invoke")
-                .onClass("org.apache.dubbo.rpc.cluster.filter.support.ConsumerContextFilter").includeBootstrap()
-                .onBehavior("onResponse")
+                .onClass("org.apache.dubbo.rpc.filter.GenericImplFilter").includeBootstrap()
+                .onBehavior("invoke")
+                // dubbo 3.0
                 .onClass("org.apache.dubbo.rpc.cluster.filter.support.ConsumerContextFilter").includeBootstrap()
                 .onBehavior("invoke")
                 .onWatch(new DubboConsumerEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
