@@ -5,7 +5,6 @@ import com.alibaba.jvm.sandbox.api.event.Event;
 import com.alibaba.jvm.sandbox.api.event.ReturnEvent;
 import com.alibaba.jvm.sandbox.api.event.ThrowsEvent;
 import com.alibaba.jvm.sandbox.api.listener.EventListener;
-import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
@@ -29,12 +28,12 @@ public abstract class BaseEventListener implements EventListener {
         try {
             switch (event.type) {
                 case BEFORE:
-                    if (entrance) {
+                    if(entrance){
                         Span span = extractSpan(((BeforeEvent) event));
-                        if (Objects.isNull(span)) {
+                        if(Objects.isNull(span)) {
                             Tracer.start(((BeforeEvent) event).invokeId, protocol);
-                        } else {
-                            Tracer.start(span.getTraceId(), protocol, ((BeforeEvent) event).invokeId, span.getOverMachineUk());
+                        }else {
+                            Tracer.start(span.getTraceId(),protocol,((BeforeEvent) event).invokeId,null,span.getOverMachineUk());
                         }
                     }
                     doBefore((BeforeEvent) event);
@@ -84,8 +83,8 @@ public abstract class BaseEventListener implements EventListener {
         invocation.setInnerEntrace(entrance);
         invocation.setProtocol(protocol);
         invocation.setIndex(event.invokeId);
-        invocation.setUk(Tracer.initTraceId(event.invokeId));
-        invocation.setPreUk(Tracer.getPreUk());
+        invocation.setUk(Tracer.initUk(event.invokeId));
+        invocation.setPreUk(entrance?Tracer.getOverMachineUk():Tracer.getPreUk());
         invocation.setIp(Tracer.getLocalIp());
         invocation.setTraceId(Tracer.getTraceId());
         return invocation;
@@ -103,7 +102,6 @@ public abstract class BaseEventListener implements EventListener {
 
 
     public abstract void transportSpan(BeforeEvent event);
-
     public abstract Span extractSpan(BeforeEvent event);
 }
 
