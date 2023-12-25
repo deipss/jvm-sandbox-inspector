@@ -4,7 +4,7 @@
 ![Static Badge](https://img.shields.io/badge/http--yellow)
 ![Static Badge](https://img.shields.io/badge/dubbo-3.0-red)
 ![Static Badge](https://img.shields.io/badge/jdbc--green)
-![Static Badge](https://img.shields.io/badge/rocket-mq--green)
+![Static Badge](https://img.shields.io/badge/rocket--mq--#CC0033)
 
 下图为一个是一个简要的用户下单流程
 

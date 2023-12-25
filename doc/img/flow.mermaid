@@ -1,5 +1,5 @@
 
-flowchart TB
+flowchart LR
     consumer --1.http create order--> trade-facade
     consumer --2.http pay--> payment-facade
 subgraph trade
@@ -20,5 +20,6 @@ subgraph user
 user-facade --1.2.1……--> user-core
 user-core --1.2.1.1……--> mysql[(mysql)]
 end
-style consumer fill:#f9f,stroke:#333,stroke-width:4px
-style user-core fill:#bbf
+style consumer fill:#336600
+style user-core fill:#FF0000
+style trade fill:#999966
