@@ -20,12 +20,13 @@ public class Tracer {
         private String traceId;
         private String protocol;
         private int invokeId;
+        private String preUk;
     }
 
     private static ThreadLocal<TraceContext> ttlContext = new TransmittableThreadLocal<>();
 
 
-    private static String initTraceId(int invokeId) {
+    public static String initTraceId(int invokeId) {
         return getLocalIp() + "_" + System.currentTimeMillis() + "_" + invokeId;
     }
 
@@ -35,11 +36,15 @@ public class Tracer {
     }
 
     public static void start(String traceId, String protocol, int invokeId) {
-        ttlContext.set(new TraceContext(traceId, protocol, invokeId));
+        ttlContext.set(new TraceContext(traceId, protocol, invokeId,null));
     }
 
-    public static String get() {
+    public static String getTraceId() {
         return ttlContext.get().getTraceId();
+    }
+
+    public static String getPreUk() {
+        return ttlContext.get().getPreUk();
     }
 
     public static boolean nonNull() {

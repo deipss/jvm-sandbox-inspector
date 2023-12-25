@@ -31,4 +31,7 @@ final int invokeId=invokeIdSequencer.getAndIncrement();
 
 ```
 
-# http通信时，调用一些关键接口，如微信支付，不能传递链路信息，存在拉起支付失败的风险
+# 类似Okhttp等http通信组件，调用一些关键接口，如微信支付，不能传递链路信息，存在拉起支付失败的风险
+
+
+# 

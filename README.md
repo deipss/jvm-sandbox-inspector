@@ -45,6 +45,8 @@ flowchart TB
 
 # 源代码模块介绍
 
+
+
 | module                               | 用途 |
 |--------------------------------------|----|
 | jvm-sandbox-inspector-agent          | 使用jvm-sandbox，实现一个JavaAgent模块，具体部署方法见[jvm-sandbox快速开始](https://github.com/alibaba/jvm-sandbox/wiki/USER-QUICK-START)|
@@ -53,13 +55,15 @@ flowchart TB
 | jvm-sandbox-inspector-debug-consumer | 服务调试模块，服务消费者（rocketmq consumer，dubbo consumer，okhttp）   |
 | jvm-sandbox-inspector-debug-provider | 服务调试模块，服务提供者（rocketmq sent，dubbo provider，restful 接口）   |
 
- 
- 
- 
- 
 
-# 
 
 # 分布式链路
 论文地址如下：
 -  [ Dapper, a Large-Scale Distributed Systems Tracing Infrastructure](https://storage.googleapis.com/gweb-research2023-media/pubtools/pdf/36356.pdf  )
+
+
+# 阅读
+
+- [代码细节](doc%2Fnotes.md)
+
+- [开发指南](doc%2Fguide.md)

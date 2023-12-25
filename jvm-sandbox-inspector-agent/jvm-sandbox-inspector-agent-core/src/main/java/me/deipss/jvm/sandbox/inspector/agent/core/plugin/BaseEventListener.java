@@ -5,6 +5,7 @@ import com.alibaba.jvm.sandbox.api.event.Event;
 import com.alibaba.jvm.sandbox.api.event.ReturnEvent;
 import com.alibaba.jvm.sandbox.api.event.ThrowsEvent;
 import com.alibaba.jvm.sandbox.api.listener.EventListener;
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
@@ -25,8 +26,14 @@ public abstract class BaseEventListener implements EventListener {
         try {
             switch (event.type) {
                 case BEFORE:
+                    String globalTraceId = extractSpan(((BeforeEvent) event));
                     if(entrance){
-                        Tracer.start(((BeforeEvent) event).invokeId,protocol);
+                        if(Strings.isNullOrEmpty(globalTraceId)) {
+                            Tracer.start(((BeforeEvent) event).invokeId, protocol);
+                        }else {
+                            Tracer.start(globalTraceId,protocol,((BeforeEvent) event).invokeId);
+
+                        }
                     }
                     doBefore((BeforeEvent) event);
                     transportSpan((BeforeEvent) event);
@@ -75,8 +82,10 @@ public abstract class BaseEventListener implements EventListener {
         invocation.setInnerEntrace(entrance);
         invocation.setProtocol(protocol);
         invocation.setIndex(event.invokeId);
+        invocation.setUk(Tracer.initTraceId(event.invokeId));
+        invocation.setPreUk(Tracer.getPreUk());
         invocation.setIp(Tracer.getLocalIp());
-        invocation.setTraceId(Tracer.get());
+        invocation.setTraceId(Tracer.getTraceId());
         return invocation;
     }
 
@@ -92,5 +101,6 @@ public abstract class BaseEventListener implements EventListener {
 
 
     public abstract void transportSpan(BeforeEvent event);
+    public abstract String extractSpan(BeforeEvent event);
 }
 

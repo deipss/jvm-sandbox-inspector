@@ -14,4 +14,9 @@ public class DubboConsumerEventListener extends BaseEventListener {
     public void transportSpan(BeforeEvent event) {
         log.info(event.javaClassName);
     }
+
+    @Override
+    public String extractSpan(BeforeEvent event) {
+        return null;
+    }
 }
