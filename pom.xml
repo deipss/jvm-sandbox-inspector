@@ -36,7 +36,7 @@
         <metainf-services.version>1.8</metainf-services.version>
         <org.slf4j.version>1.7.24</org.slf4j.version>
         <logback.version>1.2.1</logback.version>
-
+        <okhttp.version>3.12.1</okhttp.version>
     </properties>
 
     <dependencyManagement>
@@ -140,6 +140,11 @@
                 <artifactId>metainf-services</artifactId>
                 <version>${metainf-services.version}</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
             </dependency>
             <!--log-->
             <dependency>
