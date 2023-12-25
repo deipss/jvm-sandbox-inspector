@@ -32,10 +32,10 @@ public class Tracer {
 
     public static void start(int invokeId, String protocol) {
         String traceId = initTraceId(invokeId);
-        start(traceId, protocol, invokeId);
+        start(traceId, protocol, invokeId,traceId);
     }
 
-    public static void start(String traceId, String protocol, int invokeId) {
+    public static void start(String traceId, String protocol, int invokeId,String preUk) {
         ttlContext.set(new TraceContext(traceId, protocol, invokeId,null));
     }
 
@@ -70,6 +70,7 @@ public class Tracer {
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
+            log.error("获取IP地址失败,返回 127.0.0.1",e);
             ip = "127.0.0.1";
         }
         return ip;

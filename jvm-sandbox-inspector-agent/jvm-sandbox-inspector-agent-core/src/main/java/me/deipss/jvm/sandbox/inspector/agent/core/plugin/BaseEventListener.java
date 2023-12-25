@@ -9,9 +9,12 @@ import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
+import me.deipss.jvm.sandbox.inspector.agent.api.domain.Span;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
 import me.deipss.jvm.sandbox.inspector.agent.core.util.InvocationSendUtil;
+
+import java.util.Objects;
 
 @AllArgsConstructor
 @Slf4j
@@ -26,13 +29,12 @@ public abstract class BaseEventListener implements EventListener {
         try {
             switch (event.type) {
                 case BEFORE:
-                    String globalTraceId = extractSpan(((BeforeEvent) event));
-                    if(entrance){
-                        if(Strings.isNullOrEmpty(globalTraceId)) {
+                    if (entrance) {
+                        Span span = extractSpan(((BeforeEvent) event));
+                        if (Objects.isNull(span)) {
                             Tracer.start(((BeforeEvent) event).invokeId, protocol);
-                        }else {
-                            Tracer.start(globalTraceId,protocol,((BeforeEvent) event).invokeId);
-
+                        } else {
+                            Tracer.start(span.getTraceId(), protocol, ((BeforeEvent) event).invokeId, span.getOverMachineUk());
                         }
                     }
                     doBefore((BeforeEvent) event);
@@ -101,6 +103,7 @@ public abstract class BaseEventListener implements EventListener {
 
 
     public abstract void transportSpan(BeforeEvent event);
-    public abstract String extractSpan(BeforeEvent event);
+
+    public abstract Span extractSpan(BeforeEvent event);
 }
 

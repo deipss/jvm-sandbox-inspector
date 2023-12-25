@@ -5,12 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Invocation {
-
+public class Invocation implements Serializable {
+    private static final long serialVersionUID = -1L;
     /**
      * 协议
      */

@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HeartBeat {
+public class HeartBeat implements Serializable {
+    private static final long serialVersionUID = -1L;
 
     /**
      * 应用名称
