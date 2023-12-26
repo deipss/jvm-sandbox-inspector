@@ -2,6 +2,7 @@ package me.deipss.jvm.sandbox.inspector.agent.core.plugin.jdbc;
 
 import com.alibaba.jvm.sandbox.api.event.BeforeEvent;
 import lombok.extern.slf4j.Slf4j;
+import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Span;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BaseEventListener;
 
@@ -13,11 +14,15 @@ public class JdbcEventListener extends BaseEventListener {
 
     @Override
     public void transportSpan(BeforeEvent event) {
-        log.info(event.javaClassName);
     }
 
     @Override
     public Span extractSpan(BeforeEvent event) {
         return null;
+    }
+
+    @Override
+    public void assembleRequest(BeforeEvent event, Invocation invocation) {
+        invocation.setSql(event.argumentArray[0].toString());
     }
 }

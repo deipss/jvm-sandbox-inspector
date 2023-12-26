@@ -4,7 +4,7 @@
 ![Static Badge](https://img.shields.io/badge/http--yellow)
 ![Static Badge](https://img.shields.io/badge/dubbo-3.0-red)
 ![Static Badge](https://img.shields.io/badge/jdbc--green)
-![Static Badge](https://img.shields.io/badge/rocket--mq--#CC0033)
+![Static Badge](https://img.shields.io/badge/rocket-4.8.0-%23CC0033)
 ![Static Badge](https://img.shields.io/badge/TTL-2.10.2-%23660066)
 
 

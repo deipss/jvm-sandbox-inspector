@@ -1,5 +1,6 @@
 package me.deipss.jvm.sandbox.inspector.agent.core.plugin;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.jvm.sandbox.api.event.BeforeEvent;
 import com.alibaba.jvm.sandbox.api.event.Event;
 import com.alibaba.jvm.sandbox.api.event.ReturnEvent;
@@ -64,11 +65,12 @@ public abstract class BaseEventListener implements EventListener {
     public void doBefore(BeforeEvent event) {
         Invocation invocation = initInvocation(event);
         InvocationCache.put(event.invokeId, invocation);
+        assembleRequest(event,invocation);
     }
 
     public void doReturn(ReturnEvent event) {
         Invocation invocation = InvocationCache.get(event.invokeId);
-        invocation.setResponse(event.object);
+        assembleResponse(event,invocation);
     }
 
     public void doThrow(ThrowsEvent event) {
@@ -80,9 +82,8 @@ public abstract class BaseEventListener implements EventListener {
 
     public Invocation initInvocation(BeforeEvent event) {
         Invocation invocation = new Invocation();
-        invocation.setInnerEntrace(entrance);
+        invocation.setInnerEntrance(entrance);
         invocation.setProtocol(protocol);
-        invocation.setIndex(event.invokeId);
         invocation.setUk(Tracer.initUk(event.invokeId));
         invocation.setPreUk(entrance?Tracer.getOverMachineUk():Tracer.getPreUk());
         invocation.setIp(Tracer.getLocalIp());
@@ -92,16 +93,28 @@ public abstract class BaseEventListener implements EventListener {
 
     public void sendInvocationReturn(ReturnEvent event) {
         Invocation invocation = InvocationCache.remove(event.invokeId);
+        toJson(invocation);
         InvocationSendUtil.send(invocation);
     }
 
     public void sendInvocationThrow(ThrowsEvent event) {
         Invocation invocation = InvocationCache.remove(event.invokeId);
+        toJson(invocation);
         InvocationSendUtil.send(invocation);
     }
 
 
     public abstract void transportSpan(BeforeEvent event);
     public abstract Span extractSpan(BeforeEvent event);
+
+    public abstract void assembleRequest(BeforeEvent event ,Invocation invocation);
+    public  void assembleResponse(ReturnEvent event ,Invocation invocation){
+        invocation.setResponse(event.object);
+    }
+
+    public void toJson(Invocation invocation){
+        invocation.setRequestJson(JSON.toJSONString(invocation.getRequest()));
+        invocation.setResponseJson(JSON.toJSONString(invocation.getResponseJson()));
+    }
 }
 

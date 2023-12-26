@@ -20,9 +20,9 @@ public class JdbcPlugin extends BasePlugin {
     @Override
     public void watch(ModuleEventWatcher watcher) {
         new EventWatchBuilder(watcher)
-                .onClass("java.sql.Statement").includeBootstrap().includeSubClasses()
+                .onClass("java.sql.Statement").includeBootstrap()
                 .onBehavior("execute")
-                .onClass("java.sql.PreparedStatement").includeBootstrap().includeSubClasses()
+                .onClass("java.sql.PreparedStatement").includeBootstrap()
                 .onBehavior("execute")
                 .onWatch(new JdbcEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
     }

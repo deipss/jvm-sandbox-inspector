@@ -8,7 +8,7 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BasePlugin;
 
 public class RocketMqSendPlugin extends BasePlugin {
     public RocketMqSendPlugin() {
-        super(Constant.DUBBO_CONSUMER,false);
+        super(Constant.ROCKET_MQ_SEND,false);
     }
 
 

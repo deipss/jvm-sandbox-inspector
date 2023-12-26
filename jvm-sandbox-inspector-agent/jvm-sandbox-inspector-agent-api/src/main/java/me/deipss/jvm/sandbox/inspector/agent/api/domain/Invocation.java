@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -36,25 +37,16 @@ public class Invocation implements Serializable {
      * @see com.alibaba.jvm.sandbox.api.event.InvokeEvent#invokeId
      */
     private int invokeId;
-    /**
-     * @see com.alibaba.jvm.sandbox.api.event.InvokeEvent#processId
-     */
-    private int processId;
-
-    /**
-     * 内部计数
-     */
-    private Integer index;
 
     /**
      * 是否为当前机器内部调用的入口
      */
-    private boolean innerEntrace;
+    private boolean innerEntrance;
 
     /**
      * 是否为跳跃多台机器，调用的入口
      */
-    private boolean outerEntrace;
+    private boolean outerEntrance;
 
     /**
      * 请求参数
@@ -64,7 +56,7 @@ public class Invocation implements Serializable {
     /**
      * 返回结果
      */
-    private String reponseJson;
+    private String responseJson;
 
     /**
      * 异常信息
@@ -86,6 +78,22 @@ public class Invocation implements Serializable {
      */
     private String topic;
 
+    /**
+     * 消息队列的消息ID
+     */
+    private String msgId;
+
+    /**
+     * 消息队列的标签
+     */
+    private String tags;
+
+
+    /**
+     * 消息体
+     */
+    private String mqBody;
+
 
     /**
      * 调用开始时间
@@ -97,12 +105,43 @@ public class Invocation implements Serializable {
      */
     private Long end;
 
+    /**
+     * ip
+     */
     private String ip;
 
     /**
-     * 类加载器
+     * http uri
      */
-    private transient ClassLoader classLoader;
+    private String uri;
+
+    /**
+     * http url
+     */
+    private String url;
+
+
+    /**
+     * http mediaType
+     */
+    private String mediaType;
+
+    /**
+     * http body
+     */
+    private String httpBody;
+
+
+    /**
+     * http headers
+     */
+    private Map<String, String> httpHeaders;
+
+    /**
+     * http Parameters
+     */
+    private Map<String, String> httpParameters;
+
 
     private transient Object[] request;
 
