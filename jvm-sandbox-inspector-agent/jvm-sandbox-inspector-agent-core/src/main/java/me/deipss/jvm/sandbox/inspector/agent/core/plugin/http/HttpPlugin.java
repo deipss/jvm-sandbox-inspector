@@ -11,7 +11,6 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BasePlugin;
 public class HttpPlugin extends BasePlugin {
     public HttpPlugin() {
         super(Constant.HTTP,true);
-        log.info("load plugin={},entrance={}",Constant.HTTP,false);
     }
 
 

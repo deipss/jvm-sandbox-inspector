@@ -11,7 +11,6 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BasePlugin;
 public class DubboConsumerPlugin extends BasePlugin {
     public DubboConsumerPlugin() {
         super(Constant.DUBBO_CONSUMER,false);
-        log.info("load plugin={},entrance={}", Constant.DUBBO_CONSUMER,false);
     }
 
 

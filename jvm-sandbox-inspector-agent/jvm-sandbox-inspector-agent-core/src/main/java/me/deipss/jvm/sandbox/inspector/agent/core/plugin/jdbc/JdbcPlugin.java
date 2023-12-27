@@ -12,7 +12,6 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo.DubboConsumerEven
 public class JdbcPlugin extends BasePlugin {
     public JdbcPlugin() {
         super(Constant.JDBC,true);
-        log.info("load plugin={},entrance={}",Constant.JDBC,false);
     }
 
 
