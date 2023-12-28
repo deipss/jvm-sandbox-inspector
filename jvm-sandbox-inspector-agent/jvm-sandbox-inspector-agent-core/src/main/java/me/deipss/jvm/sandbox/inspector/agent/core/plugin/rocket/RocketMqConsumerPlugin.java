@@ -17,8 +17,10 @@ public class RocketMqConsumerPlugin extends BasePlugin {
     public void watch(ModuleEventWatcher watcher) {
         new EventWatchBuilder(watcher)
                 .onClass("org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently").includeBootstrap()
+                .includeSubClasses()
                 .onBehavior("consumeMessage")
                 .onClass("org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly").includeBootstrap()
+                .includeSubClasses()
                 .onBehavior("consumeMessage")
                 .onWatch(new RocketMqConsumerEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
     }

@@ -4,10 +4,11 @@ import com.alibaba.jvm.sandbox.api.listener.ext.Advice;
 import com.alibaba.jvm.sandbox.api.listener.ext.AdviceListener;
 import com.alibaba.ttl.TtlCallable;
 import com.alibaba.ttl.TtlRunnable;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Callable;
 
-
+@Slf4j
 public class TtlConcurrentListener extends AdviceListener{
     @Override
     protected void before(Advice advice) throws Throwable {
@@ -27,5 +28,6 @@ public class TtlConcurrentListener extends AdviceListener{
         if (parameter0Type.isAssignableFrom(Callable.class)) {
             parameterArray[0] = TtlCallable.get((Callable) parameterArray[0]);
         }
+        log.info("ttl wrapper success");
     }
 }

@@ -85,7 +85,7 @@ public abstract class BaseEventListener implements EventListener {
         invocation.setInnerEntrance(entrance);
         invocation.setProtocol(protocol);
         invocation.setUk(Tracer.initUk(event.invokeId));
-        invocation.setPreUk(entrance?Tracer.getOverMachineUk():Tracer.getPreUk());
+        invocation.setPreUk(entrance?Tracer.getOverMachineUk():Tracer.getPreUk(event.invokeId,protocol));
         invocation.setIp(Tracer.getLocalIp());
         invocation.setTraceId(Tracer.getTraceId());
         return invocation;
@@ -109,7 +109,9 @@ public abstract class BaseEventListener implements EventListener {
 
     public abstract void assembleRequest(BeforeEvent event ,Invocation invocation);
     public  void assembleResponse(ReturnEvent event ,Invocation invocation){
-        invocation.setResponse(event.object);
+        if(event.object!=null) {
+            invocation.setResponse(event.object);
+        }
     }
 
     public void toJson(Invocation invocation){

@@ -11,7 +11,7 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo.DubboConsumerEven
 @Slf4j
 public class JdbcPlugin extends BasePlugin {
     public JdbcPlugin() {
-        super(Constant.JDBC,true);
+        super(Constant.JDBC,false);
     }
 
 
@@ -20,8 +20,7 @@ public class JdbcPlugin extends BasePlugin {
     public void watch(ModuleEventWatcher watcher) {
         new EventWatchBuilder(watcher)
                 .onClass("java.sql.Statement").includeBootstrap()
-                .onBehavior("execute")
-                .onClass("java.sql.PreparedStatement").includeBootstrap()
+                .includeSubClasses()
                 .onBehavior("execute")
                 .onWatch(new JdbcEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
     }

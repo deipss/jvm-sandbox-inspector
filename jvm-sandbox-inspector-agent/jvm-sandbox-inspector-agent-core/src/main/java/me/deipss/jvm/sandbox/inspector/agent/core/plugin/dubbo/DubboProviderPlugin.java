@@ -10,7 +10,7 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BasePlugin;
 @Slf4j
 public class DubboProviderPlugin extends BasePlugin {
     public DubboProviderPlugin() {
-        super(Constant.DUBBO_PROVIDER,false);
+        super(Constant.DUBBO_PROVIDER,true);
     }
 
 

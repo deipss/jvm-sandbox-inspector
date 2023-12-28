@@ -44,7 +44,12 @@ public class Tracer {
         return ttlContext.get().getTraceId();
     }
 
-    public static String getPreUk() {
+    public static String getPreUk(int invokeId, String protocol) {
+        TraceContext traceContext = ttlContext.get();
+        if(Objects.isNull(traceContext)){
+            start(invokeId,protocol);
+            log.warn("trace is null ,start now");
+        }
         return ttlContext.get().getPreUk();
     }
 
