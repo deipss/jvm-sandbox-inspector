@@ -1,5 +1,6 @@
 package me.deipss.jvm.sandbox.inspector.agent.core;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.jvm.sandbox.api.Information;
 import com.alibaba.jvm.sandbox.api.Module;
 import com.alibaba.jvm.sandbox.api.ModuleLifecycle;
@@ -10,6 +11,8 @@ import com.alibaba.jvm.sandbox.api.resource.ModuleEventWatcher;
 import com.alibaba.jvm.sandbox.api.resource.ModuleManager;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.Constant;
+import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageRequest;
+import me.deipss.jvm.sandbox.inspector.agent.core.impl.MockManageServiceImpl;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.concurrent.TtlConcurrentPlugin;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo.DubboConsumerPlugin;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo.DubboProviderPlugin;
@@ -23,6 +26,8 @@ import org.kohsuke.MetaInfServices;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.channels.NonReadableChannelException;
+import java.util.List;
 
 @MetaInfServices(Module.class)
 @Information(id = Constant.moduleId, author = "deipss666@gmail.com", version = Constant.version)
@@ -39,6 +44,8 @@ public class InspectorModule implements Module, ModuleLifecycle {
 
     @Resource
     private LoadedClassDataSource loadedClassDataSource;
+
+    private MockManageServiceImpl mockManageService;
 
     @Override
     public void onLoad() throws Throwable {
@@ -84,11 +91,25 @@ public class InspectorModule implements Module, ModuleLifecycle {
         rocketMqSendPlugin.watch(moduleEventWatcher);
 
         InvocationSendUtil.start();
+
+        mockManageService = new MockManageServiceImpl(moduleEventWatcher);
     }
 
     @Command("manageMock")
     public void manageMock(HttpServletRequest request, HttpServletResponse response){
         log.info(request.getPathInfo());
+        MockManageRequest mock = JSON.parseObject(request.getParameter("mock"), MockManageRequest.class);
+        List<MockManageRequest> mockList = JSON.parseArray(request.getParameter("mockList"), MockManageRequest.class);
+        switch (mock.getOperate()) {
+            case ADD:mockManageService.add(mock);
+                break;
+            case VIEW:mockManageService.view();
+                break;
+            case STOP:mockManageService.stop(mock.getMockId());
+                break;
+            case ADD_ALL:mockManageService.addAll(mockList);
+                break;
+        }
     }
 
 

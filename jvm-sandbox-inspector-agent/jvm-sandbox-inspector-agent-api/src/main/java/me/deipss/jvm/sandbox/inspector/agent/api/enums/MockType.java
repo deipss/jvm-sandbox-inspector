@@ -3,16 +3,15 @@ package me.deipss.jvm.sandbox.inspector.agent.api.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
-public enum Operate{
+@Getter
+public enum MockType {
 
-    STOP("停用"),
-    ADD("添加"),
-    ADD_ALL("添加所有"),
-    VIEW("展示所有"),
+    RETURN_BEFORE_EXE("方法执行前返回"),
+    THROW_BEFORE_EXE("方法执行前发生异常"),
+
+
     ;
     private final String description;
-
 
 }

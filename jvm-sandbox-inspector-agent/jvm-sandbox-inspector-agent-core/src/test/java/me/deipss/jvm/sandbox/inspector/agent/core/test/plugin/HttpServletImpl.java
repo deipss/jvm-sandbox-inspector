@@ -11,9 +11,8 @@ import java.io.IOException;
 @Slf4j
 public class HttpServletImpl extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException
-    {
-        log.info("http ,parameter={}",req.getParameter("test"));
+            throws ServletException, IOException {
+        log.info("http ,parameter={}", req.getParameter("test"));
     }
 
 }
