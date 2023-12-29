@@ -37,9 +37,8 @@ flowchart LR
         user-core --> mysql[(mysql)]
     end
 
-    style consumer fill: #336600
+    style consumer fill: #333300
     style user-core fill: #FF0000
-    style trade fill: #999966
 
 ```
 
@@ -67,21 +66,38 @@ flowchart LR
 
 - 论文地址 [ Dapper, a Large-Scale Distributed Systems Tracing Infrastructure](https://storage.googleapis.com/gweb-research2023-media/pubtools/pdf/36356.pdf  )
 
+在不同的应用中，使用不同的通信协议将span上下文传递。如用户使用http来支付，到了`payment-facade`应用，从header没有
+解析出span，就初始化一个新span，作为链路的起始，`payment-facade`通过RPC调用`payment-platform`时，将span就放在
+RpcContext中，如果使用rocket mq，可以将span放在user property中。作为通信中的接收方，就解析span是否存在，存在就
+继续沿用，不存在就初始化。
+
 ```mermaid
-flowchart TB
-    c1-->a2
-    subgraph one
-        a1-->a2
+
+
+flowchart LR
+    consumer --> trade-facade
+    consumer --> http(inject span to http header)
+
+    subgraph payment-facade-machine
+        http --> payment-facade
+        payment-facade --> dubbo-consumer(inject span to RpcContext)
     end
-    subgraph two
-        b1-->b2
+    subgraph payment-platform-machine
+        dubbo-consumer --> dubbo-provider(get span from RpcContext)
+        dubbo-provider --> payment-platform
     end
-    subgraph three
-        c1-->c2
+
+    subgraph trade
+        payment-platform --> trade-facade
+        trade-facade --> store-facade
     end
-    one --> two
-    three --> two
-    two --> c2
+
+    style consumer fill: #333300
+    style http fill: #333399
+    style dubbo-consumer fill: #333399
+    style dubbo-provider fill: #333399
+
+
 
 ```
 
