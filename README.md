@@ -37,7 +37,7 @@ flowchart LR
         user-core --> mysql[(mysql)]
     end
 
-    style consumer fill: #333300
+    style consumer fill: #CCCCCC
     style user-core fill: #FF0000
 
 ```
@@ -92,10 +92,10 @@ flowchart LR
         trade-facade --> store-facade
     end
 
-    style consumer fill: #333300
-    style http fill: #333399
-    style dubbo-consumer fill: #333399
-    style dubbo-provider fill: #333399
+    style consumer fill: #CCCCCC
+    style http fill: #CCFFFF
+    style dubbo-consumer fill: #CCFFFF
+    style dubbo-provider fill: #CCFFFF
 
 
 
