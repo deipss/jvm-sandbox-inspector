@@ -18,24 +18,28 @@
 flowchart LR
     consumer --> trade-facade
     consumer --> payment-facade
-subgraph trade
-trade-facade --> store-facade
-trade-facade --> user-facade
-trade-facade --> trade-query
-trade-facade --> trade-order
-end
-subgraph payment
-payment-facade --> payment-platform
-payment-platform --> trade-facade
-end
-subgraph store
-store-facade --> store-index
-store-index --> es[\Elastic Search\]
-end
-subgraph user
-user-facade --> user-core
-user-core --> mysql[(mysql)]
-end
+    subgraph trade
+        trade-facade --> store-facade
+        trade-facade --> user-facade
+        trade-facade --> trade-query
+        trade-facade --> trade-order
+    end
+    subgraph payment
+        payment-facade --> payment-platform
+        payment-platform --> trade-facade
+    end
+    subgraph store
+        store-facade --> store-index
+        store-index --> es[\Elastic Search\]
+    end
+    subgraph user
+        user-facade --> user-core
+        user-core --> mysql[(mysql)]
+    end
+
+    style consumer fill: #336600
+    style user-core fill: #FF0000
+    style trade fill: #999966
 
 ```
 
