@@ -16,25 +16,25 @@
 ```mermaid
 
 flowchart LR
-    consumer --1.http create order--> trade-facade
-    consumer --2.http pay--> payment-facade
+    consumer --> trade-facade
+    consumer --> payment-facade
 subgraph trade
-trade-facade --1.1 query store status(open/close)--> store-facade
-trade-facade --1.2 query user information--> user-facade
-trade-facade --1.3 order exists?--> trade-query
-trade-facade --1.4 create order --> trade-order
+trade-facade --> store-facade
+trade-facade --> user-facade
+trade-facade --> trade-query
+trade-facade --> trade-order
 end
 subgraph payment
-payment-facade --2.1 query order--> payment-platform
-payment-platform --2.1.1 verify order --> trade-facade
+payment-facade --> payment-platform
+payment-platform --> trade-facade
 end
 subgraph store
-store-facade --1.1.1 query store status--> store-index
-store-index --1.1.1.1 query es--> es[\Elastic Search\]
+store-facade --> store-index
+store-index --> es[\Elastic Search\]
 end
 subgraph user
-user-facade --1.2.1……--> user-core
-user-core --1.2.1.1……--> mysql[(mysql)]
+user-facade --> user-core
+user-core --> mysql[(mysql)]
 end
 
 ```
