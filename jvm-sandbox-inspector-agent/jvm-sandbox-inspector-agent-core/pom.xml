@@ -6,7 +6,7 @@
     <parent>
         <groupId>me.deipss</groupId>
         <artifactId>jvm-sandbox-inspector-agent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>jvm-sandbox-inspector-agent-core</artifactId>
@@ -42,8 +42,8 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.dubbo</groupId>
@@ -74,7 +74,6 @@
             <version>5.3.29</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>

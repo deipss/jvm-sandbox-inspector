@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.deipss.jvm.sandbox.inspector.debug.consumer.dal.classicmodel.CustomersMapper">
+  <resultMap id="BaseResultMap" type="me.deipss.jvm.sandbox.inspector.debug.consumer.dal.entity.classicmodel.Customers">
+    <!--@mbg.generated-->
+    <!--@Table customers-->
+    <id column="customerNumber" jdbcType="INTEGER" property="customernumber" />
+    <result column="customerName" jdbcType="VARCHAR" property="customername" />
+    <result column="contactLastName" jdbcType="VARCHAR" property="contactlastname" />
+    <result column="contactFirstName" jdbcType="VARCHAR" property="contactfirstname" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="addressLine1" jdbcType="VARCHAR" property="addressline1" />
+    <result column="addressLine2" jdbcType="VARCHAR" property="addressline2" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="postalCode" jdbcType="VARCHAR" property="postalcode" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="salesRepEmployeeNumber" jdbcType="INTEGER" property="salesrepemployeenumber" />
+    <result column="creditLimit" jdbcType="DECIMAL" property="creditlimit" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, 
+    addressLine2, city, `state`, postalCode, country, salesRepEmployeeNumber, creditLimit
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update customers
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="customerName = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.customername,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="contactLastName = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.contactlastname,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="contactFirstName = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.contactfirstname,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="phone = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.phone,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="addressLine1 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.addressline1,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="addressLine2 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.addressline2,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="city = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.city,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`state` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.state,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="postalCode = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.postalcode,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="country = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.country,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="salesRepEmployeeNumber = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.salesrepemployeenumber,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="creditLimit = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when customerNumber = #{item.customernumber,jdbcType=INTEGER} then #{item.creditlimit,jdbcType=DECIMAL}
+        </foreach>
+      </trim>
+    </trim>
+    where customerNumber in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.customernumber,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into customers
+    (customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, 
+      addressLine2, city, `state`, postalCode, country, salesRepEmployeeNumber, creditLimit
+      )
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.customernumber,jdbcType=INTEGER}, #{item.customername,jdbcType=VARCHAR}, 
+        #{item.contactlastname,jdbcType=VARCHAR}, #{item.contactfirstname,jdbcType=VARCHAR}, 
+        #{item.phone,jdbcType=VARCHAR}, #{item.addressline1,jdbcType=VARCHAR}, #{item.addressline2,jdbcType=VARCHAR}, 
+        #{item.city,jdbcType=VARCHAR}, #{item.state,jdbcType=VARCHAR}, #{item.postalcode,jdbcType=VARCHAR}, 
+        #{item.country,jdbcType=VARCHAR}, #{item.salesrepemployeenumber,jdbcType=INTEGER}, 
+        #{item.creditlimit,jdbcType=DECIMAL})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="me.deipss.jvm.sandbox.inspector.debug.consumer.dal.entity.classicmodel.Customers">
+    <!--@mbg.generated-->
+    insert into customers
+    (customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, 
+      addressLine2, city, `state`, postalCode, country, salesRepEmployeeNumber, creditLimit
+      )
+    values
+    (#{customernumber,jdbcType=INTEGER}, #{customername,jdbcType=VARCHAR}, #{contactlastname,jdbcType=VARCHAR}, 
+      #{contactfirstname,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{addressline1,jdbcType=VARCHAR}, 
+      #{addressline2,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
+      #{postalcode,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, #{salesrepemployeenumber,jdbcType=INTEGER}, 
+      #{creditlimit,jdbcType=DECIMAL})
+    on duplicate key update 
+    customerNumber = #{customernumber,jdbcType=INTEGER}, 
+    customerName = #{customername,jdbcType=VARCHAR}, 
+    contactLastName = #{contactlastname,jdbcType=VARCHAR}, 
+    contactFirstName = #{contactfirstname,jdbcType=VARCHAR}, 
+    phone = #{phone,jdbcType=VARCHAR}, 
+    addressLine1 = #{addressline1,jdbcType=VARCHAR}, 
+    addressLine2 = #{addressline2,jdbcType=VARCHAR}, 
+    city = #{city,jdbcType=VARCHAR}, 
+    `state` = #{state,jdbcType=VARCHAR}, 
+    postalCode = #{postalcode,jdbcType=VARCHAR}, 
+    country = #{country,jdbcType=VARCHAR}, 
+    salesRepEmployeeNumber = #{salesrepemployeenumber,jdbcType=INTEGER}, 
+    creditLimit = #{creditlimit,jdbcType=DECIMAL}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="me.deipss.jvm.sandbox.inspector.debug.consumer.dal.entity.classicmodel.Customers">
+    <!--@mbg.generated-->
+    insert into customers
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="customernumber != null">
+        customerNumber,
+      </if>
+      <if test="customername != null">
+        customerName,
+      </if>
+      <if test="contactlastname != null">
+        contactLastName,
+      </if>
+      <if test="contactfirstname != null">
+        contactFirstName,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="addressline1 != null">
+        addressLine1,
+      </if>
+      <if test="addressline2 != null">
+        addressLine2,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="state != null">
+        `state`,
+      </if>
+      <if test="postalcode != null">
+        postalCode,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="salesrepemployeenumber != null">
+        salesRepEmployeeNumber,
+      </if>
+      <if test="creditlimit != null">
+        creditLimit,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="customernumber != null">
+        #{customernumber,jdbcType=INTEGER},
+      </if>
+      <if test="customername != null">
+        #{customername,jdbcType=VARCHAR},
+      </if>
+      <if test="contactlastname != null">
+        #{contactlastname,jdbcType=VARCHAR},
+      </if>
+      <if test="contactfirstname != null">
+        #{contactfirstname,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="addressline1 != null">
+        #{addressline1,jdbcType=VARCHAR},
+      </if>
+      <if test="addressline2 != null">
+        #{addressline2,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="postalcode != null">
+        #{postalcode,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null">
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="salesrepemployeenumber != null">
+        #{salesrepemployeenumber,jdbcType=INTEGER},
+      </if>
+      <if test="creditlimit != null">
+        #{creditlimit,jdbcType=DECIMAL},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="customernumber != null">
+        customerNumber = #{customernumber,jdbcType=INTEGER},
+      </if>
+      <if test="customername != null">
+        customerName = #{customername,jdbcType=VARCHAR},
+      </if>
+      <if test="contactlastname != null">
+        contactLastName = #{contactlastname,jdbcType=VARCHAR},
+      </if>
+      <if test="contactfirstname != null">
+        contactFirstName = #{contactfirstname,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="addressline1 != null">
+        addressLine1 = #{addressline1,jdbcType=VARCHAR},
+      </if>
+      <if test="addressline2 != null">
+        addressLine2 = #{addressline2,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        `state` = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="postalcode != null">
+        postalCode = #{postalcode,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null">
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="salesrepemployeenumber != null">
+        salesRepEmployeeNumber = #{salesrepemployeenumber,jdbcType=INTEGER},
+      </if>
+      <if test="creditlimit != null">
+        creditLimit = #{creditlimit,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+
+<!--auto generated by MybatisCodeHelper on 2023-10-05-->
+  <select id="listAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from customers
+  </select>
+</mapper>

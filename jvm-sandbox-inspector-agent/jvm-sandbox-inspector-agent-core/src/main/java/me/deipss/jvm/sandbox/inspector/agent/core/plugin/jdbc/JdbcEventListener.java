@@ -23,6 +23,8 @@ public class JdbcEventListener extends BaseEventListener {
 
     @Override
     public void assembleRequest(BeforeEvent event, Invocation invocation) {
-        invocation.setSql(event.argumentArray[0].toString());
+        if(null!=event.argumentArray && event.argumentArray.length>0) {
+            invocation.setSql(event.argumentArray[0].toString());
+        }
     }
 }

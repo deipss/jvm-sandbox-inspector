@@ -6,7 +6,7 @@
     <parent>
         <groupId>me.deipss</groupId>
         <artifactId>jvm-sandbox-inspector-agent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>jvm-sandbox-inspector-agent-api</artifactId>
