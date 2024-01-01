@@ -40,3 +40,11 @@ final int invokeId=invokeIdSequencer.getAndIncrement();
 
 对于IO流增强时，注意提前将IO复制，不然会再现NPE问题
 
+
+# 5. 调试
+
+```shell
+java -Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006 -jar jvm-sandbox-inspector-debug-consumer-1.0.1-SNAPSHOT.jar 
+java -Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5007 -jar jvm-sandbox-inspector-debug-provider-1.0.1-SNAPSHOT.jar
+
+```

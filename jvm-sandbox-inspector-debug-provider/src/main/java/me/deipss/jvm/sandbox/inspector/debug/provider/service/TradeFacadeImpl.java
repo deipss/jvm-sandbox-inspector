@@ -33,7 +33,8 @@ public class TradeFacadeImpl implements TradeFacade {
         tradeCreateResponse.setMsg("success");
         tradeCreateResponse.setOrderID(orderId);
 
-        log.info("count emplyee ={}", employeesMapper.selectCount(null));
+        log.info("count employee ={}", employeesMapper.selectCount(null));
+        employeesMapper.selectAllByEmail("abc.qq@.com");
         return tradeCreateResponse;
     }
 }

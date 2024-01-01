@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.*;
 public class DebugController {
 
 
-    @DubboReference
+    @DubboReference(timeout = 10000)
     private PaymentFacade paymentFacade;
 
-    @DubboReference
+    @DubboReference(timeout = 10000)
     private TradeFacade tradeFacade;
 
     @Autowired
@@ -35,7 +35,7 @@ public class DebugController {
     @ResponseBody
     public PaymentResponse pay(@RequestBody PaymentRequest request) {
         Long l = customersMapper.selectCount(null);
-        log.info("pay before count={}",l );
+        log.info("pay before count={}", l);
         return paymentFacade.payment(request);
     }
 
@@ -43,7 +43,7 @@ public class DebugController {
     @PostMapping("/orderCreate")
     @ResponseBody
     public TradeCreateResponse orderCreate(@RequestBody TradeCreateRequest request) {
-        log.info("orderCreate before count={}",employeesMapper.selectCount(null) );
+        log.info("orderCreate before count={}", employeesMapper.selectCount(null));
         return tradeFacade.createOrder(request);
     }
 

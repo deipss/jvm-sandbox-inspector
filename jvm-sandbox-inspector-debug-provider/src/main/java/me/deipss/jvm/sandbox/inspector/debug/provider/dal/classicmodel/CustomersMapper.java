@@ -20,6 +20,10 @@ public interface CustomersMapper extends BaseMapper<Customers> {
     List<Customers> listAll();
 
 
+    List<Customers> selectAllByCity(@Param("city")String city);
+
+
+
 
 
 }

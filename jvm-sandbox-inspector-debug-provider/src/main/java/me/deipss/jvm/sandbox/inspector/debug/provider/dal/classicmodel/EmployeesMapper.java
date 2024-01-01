@@ -16,4 +16,8 @@ public interface EmployeesMapper extends BaseMapper<Employees> {
     int insertOrUpdate(Employees record);
 
     int insertOrUpdateSelective(Employees record);
+
+    List<Employees> selectAllByEmail(@Param("email")String email);
+
+
 }

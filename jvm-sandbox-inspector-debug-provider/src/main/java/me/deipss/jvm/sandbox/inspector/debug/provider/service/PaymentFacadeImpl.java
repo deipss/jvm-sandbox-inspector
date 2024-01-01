@@ -41,6 +41,8 @@ public class PaymentFacadeImpl implements PaymentFacade {
         Long l = customersMapper.selectCount(null);
         log.info("count customers ={}",l);
 
+        customersMapper.selectAllByCity("wave");
+
         return paymentResponse;
 
     }
