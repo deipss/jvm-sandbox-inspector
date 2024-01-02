@@ -12,6 +12,8 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.dubbo.rpc.RpcContext;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class DubboConsumerEventListener extends BaseEventListener {
@@ -26,6 +28,9 @@ public class DubboConsumerEventListener extends BaseEventListener {
         ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(event.javaClassLoader);
         Invocation invocation = InvocationCache.get(event.invokeId);
+        Map<String, String> attachments = RpcContext.getContext().getAttachments();
+        invocation.setRpcContext(new HashMap<>(attachments.size()));
+        invocation.getRpcContext().putAll(attachments);
         Span span = new Span(Tracer.getTraceId(), invocation.getUk());
         RpcContext.getContext().setAttachment(Span.SPAN, JSON.toJSONString(span));
         Thread.currentThread().setContextClassLoader(sandboxClassLoader);
@@ -45,4 +50,5 @@ public class DubboConsumerEventListener extends BaseEventListener {
             log.error("dubbo consumer assembleRequest error",e);
         }
     }
+
 }

@@ -1,5 +1,6 @@
 package me.deipss.jvm.sandbox.inspector.agent.core.util;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -52,7 +53,6 @@ public class InvocationSendUtil {
     }
 
     static class QueueConsumerTask implements Runnable {
-
         private boolean working = true;
 
         @Override
@@ -63,6 +63,7 @@ public class InvocationSendUtil {
                     if (record != null) {
                         invocationSendExecutor.execute(() -> {
                             log.info("send invocation={}", record);
+                            HttpUtil.post(ConfigUtil.getDataSendUrl(), JSON.toJSONString(record),null);
                         });
                     } else {
                         Thread.sleep(50);

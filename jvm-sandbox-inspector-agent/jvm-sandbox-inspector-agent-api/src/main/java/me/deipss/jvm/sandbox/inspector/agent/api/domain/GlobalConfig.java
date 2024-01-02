@@ -1,9 +1,16 @@
 package me.deipss.jvm.sandbox.inspector.agent.api.domain;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class GlobalConfig implements Serializable {
     private static final long serialVersionUID = -1L;
 

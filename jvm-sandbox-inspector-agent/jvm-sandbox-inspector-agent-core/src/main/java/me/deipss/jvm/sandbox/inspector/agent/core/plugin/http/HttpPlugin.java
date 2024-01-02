@@ -22,4 +22,6 @@ public class HttpPlugin extends BasePlugin {
                 .withParameterTypes("javax.servlet.http.HttpServletRequest", "javax.servlet.http.HttpServletResponse")
                 .onWatch(new HttpEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
     }
+
+
 }

@@ -1,0 +1,8 @@
+
+{
+  "heartUrl": "demoData",
+  "dataSendUrl": "demoData",
+  "enablePlugins": [
+    "demoData"
+  ]
+}

@@ -12,53 +12,18 @@
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
         <!-- File Appenders on need basis -->
-        <RollingFile name="debugLog" fileName="${APP_LOG_ROOT}/_${APP_NAME}_app-debug.log"
-                     filePattern="${APP_LOG_ROOT}/_${APP_NAME}_app-debug-%d{yyyy-MM-dd}-%i.log">
-            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+        <RollingFile name="infoLog" fileName="${APP_LOG_ROOT}/${APP_NAME}-info.log"
+                     filePattern="${APP_LOG_ROOT}/${APP_NAME}-info-%d{yyyy-MM-dd}-%i.log">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="100MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
-        </RollingFile>
-        <RollingFile name="infoLog" fileName="${APP_LOG_ROOT}/_${APP_NAME}_app-info.log"
-                     filePattern="${APP_LOG_ROOT}/_${APP_NAME}_app-info-%d{yyyy-MM-dd}-%i.log">
-            <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="100MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="10"/>
-        </RollingFile>
-        <RollingFile name="errorLog" fileName="${APP_LOG_ROOT}/_${APP_NAME}_app-error.log"
-                     filePattern="${APP_LOG_ROOT}/_${APP_NAME}_app-error-%d{yyyy-MM-dd}-%i.log">
-            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="100MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="10"/>
-        </RollingFile>
-        <RollingFile name="perfLog" fileName="${APP_LOG_ROOT}/_${APP_NAME}_app-perf.log"
-                     filePattern="${APP_LOG_ROOT}/_${APP_NAME}_app-perf-%d{yyyy-MM-dd}-%i.log">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="100MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="1"/>
-        </RollingFile>
-        <RollingFile name="traceLog" fileName="${APP_LOG_ROOT}/_${APP_NAME}_app-trace.log"
-                     filePattern="${APP_LOG_ROOT}/_${APP_NAME}_app-trace-%d{yyyy-MM-dd}-%i.log">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="100MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="1"/>
         </RollingFile>
     </Appenders>
     <Loggers>
         <Logger name="me.deipss.jvm.sandbox.inspector.web" additivity="false" level="info">
-            <AppenderRef ref="traceLog"/>
+            <AppenderRef ref="infoLog"/>
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="info">

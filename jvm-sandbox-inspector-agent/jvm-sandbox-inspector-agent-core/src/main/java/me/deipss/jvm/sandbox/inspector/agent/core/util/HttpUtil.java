@@ -26,6 +26,7 @@ public class HttpUtil {
     public static final CloseableHttpClient client = HttpClients.custom().setConnectionTimeToLive(3, TimeUnit.MINUTES).build();
 
     public static HttpResult post(String url, String body, List<Header> headers) {
+        log.info("post url={},body={},headers={}",url,body,headers );
         HttpPost post = new HttpPost(url);
         HttpResult result = new HttpResult();
         if (null != headers && !headers.isEmpty()) {
@@ -51,7 +52,7 @@ public class HttpUtil {
     }
 
     public static HttpResult get(String url, Map<String, String> params, List<Header> headers) {
-
+        log.info("get url={},params={},headers={}",url,params,headers );
         HttpGet httpGet = new HttpGet(url);
         HttpResult result = new HttpResult();
         try {

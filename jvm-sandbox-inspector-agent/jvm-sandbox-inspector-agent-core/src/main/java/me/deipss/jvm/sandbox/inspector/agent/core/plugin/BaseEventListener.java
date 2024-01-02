@@ -14,6 +14,7 @@ import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
 import me.deipss.jvm.sandbox.inspector.agent.core.util.InvocationSendUtil;
 
+import java.util.Date;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -64,6 +65,10 @@ public abstract class BaseEventListener implements EventListener {
 
     public void doBefore(BeforeEvent event) {
         Invocation invocation = initInvocation(event);
+        invocation.setInvokeId(event.invokeId);
+        invocation.setStart(new Date().toInstant().toEpochMilli());
+        invocation.setMethodName(event.javaMethodName);
+        invocation.setClassName(event.javaClassName);
         InvocationCache.put(event.invokeId, invocation);
         assembleRequest(event,invocation);
     }
@@ -71,6 +76,8 @@ public abstract class BaseEventListener implements EventListener {
     public void doReturn(ReturnEvent event) {
         Invocation invocation = InvocationCache.get(event.invokeId);
         assembleResponse(event,invocation);
+        invocation.setEnd(new Date().toInstant().toEpochMilli());
+
     }
 
     public void doThrow(ThrowsEvent event) {
@@ -78,6 +85,7 @@ public abstract class BaseEventListener implements EventListener {
         invocation.setThrowable(event.throwable);
         invocation.setThrowableMsg(event.throwable.getMessage());
         invocation.setThrowableClass(event.throwable.getClass().getCanonicalName());
+        invocation.setEnd(new Date().toInstant().toEpochMilli());
     }
 
     public Invocation initInvocation(BeforeEvent event) {

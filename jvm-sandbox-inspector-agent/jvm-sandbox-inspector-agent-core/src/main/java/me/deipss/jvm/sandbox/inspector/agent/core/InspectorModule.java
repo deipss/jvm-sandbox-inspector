@@ -12,6 +12,7 @@ import com.alibaba.jvm.sandbox.api.resource.ModuleManager;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.Constant;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageRequest;
+import me.deipss.jvm.sandbox.inspector.agent.core.impl.HeartBeatServiceImpl;
 import me.deipss.jvm.sandbox.inspector.agent.core.impl.MockManageServiceImpl;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.concurrent.TtlConcurrentPlugin;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo.DubboConsumerPlugin;
@@ -47,6 +48,9 @@ public class InspectorModule implements Module, ModuleLifecycle {
 
     private MockManageServiceImpl mockManageService;
 
+    private HeartBeatServiceImpl heartBeatService;
+
+
     @Override
     public void onLoad() throws Throwable {
 
@@ -64,7 +68,6 @@ public class InspectorModule implements Module, ModuleLifecycle {
 
     @Override
     public void onFrozen() throws Throwable {
-
     }
 
     @Override
@@ -93,6 +96,8 @@ public class InspectorModule implements Module, ModuleLifecycle {
         InvocationSendUtil.start();
 
         mockManageService = new MockManageServiceImpl(moduleEventWatcher);
+        heartBeatService = new HeartBeatServiceImpl();
+        heartBeatService.start();
     }
 
     @Command("manageMock")

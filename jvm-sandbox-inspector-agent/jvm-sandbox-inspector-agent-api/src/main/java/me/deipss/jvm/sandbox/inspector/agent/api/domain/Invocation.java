@@ -14,6 +14,7 @@ import java.util.Map;
 @ToString
 public class Invocation implements Serializable {
     private static final long serialVersionUID = -1L;
+
     /**
      * 协议
      */
@@ -33,6 +34,7 @@ public class Invocation implements Serializable {
      * 父调用 唯一标识
      */
     private String preUk;
+
     /**
      * @see com.alibaba.jvm.sandbox.api.event.InvokeEvent#invokeId
      */
@@ -52,6 +54,22 @@ public class Invocation implements Serializable {
      * 请求参数
      */
     private String requestJson;
+
+
+    /**
+     * 类名
+     */
+    private String className;
+
+    /**
+     * 方法名
+     */
+    private String methodName;
+
+    /**
+     * dubbo rpc context
+     */
+    private Map<String, String> rpcContext;
 
     /**
      * 返回结果
@@ -110,6 +128,9 @@ public class Invocation implements Serializable {
      */
     private String ip;
 
+
+    private int httpPort;
+
     /**
      * http uri
      */
@@ -122,9 +143,9 @@ public class Invocation implements Serializable {
 
 
     /**
-     * http mediaType
+     * http contentType
      */
-    private String mediaType;
+    private String contentType;
 
     /**
      * http body
@@ -140,7 +161,7 @@ public class Invocation implements Serializable {
     /**
      * http Parameters
      */
-    private Map<String, String> httpParameters;
+    private Map<String, String[]> httpParameters;
 
 
     private transient Object[] request;
@@ -148,6 +169,7 @@ public class Invocation implements Serializable {
     private transient Object response;
 
     private transient Throwable throwable;
+
 
 
 }

@@ -1,4 +1,4 @@
-package me.deipss.jvm.sandbox.inspector.agent.api.domain;
+package me.deipss.jvm.sandbox.inspector.web.domain.requset;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HeartBeat implements Serializable {
+public class HeartBeatRequest implements Serializable {
     private static final long serialVersionUID = -1L;
 
     /**
@@ -32,7 +32,7 @@ public class HeartBeat implements Serializable {
     /**
      * 心跳时间
      */
-    private Date beatTime;
+    private String beatTime;
 
     /**
      * 环境标识
