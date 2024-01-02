@@ -22,6 +22,8 @@ public class JdbcPlugin extends BasePlugin {
                 .onClass("java.sql.Statement").includeBootstrap()
                 .includeSubClasses()
                 .onBehavior("execute")
+                .onBehavior("executeQuery")
+                .onBehavior("executeUpdate")
                 .onWatch(new JdbcEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
     }
 }

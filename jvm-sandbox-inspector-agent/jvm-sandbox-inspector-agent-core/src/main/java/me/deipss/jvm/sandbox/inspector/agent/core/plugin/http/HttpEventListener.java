@@ -12,6 +12,7 @@ import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
 import org.apache.commons.io.CopyUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,15 +46,11 @@ public class HttpEventListener extends BaseEventListener {
     public Span extractSpan(BeforeEvent event) {
         try {
             Object obj = event.argumentArray[0];
-            if (obj instanceof HttpServletRequest) {
-                HttpServletRequest req = (HttpServletRequest) obj;
-                String header = req.getHeader(Span.SPAN);
-                if (Strings.isNullOrEmpty(header)) {
-                    return null;
-                }
-                return JSON.parseObject(header, Span.class);
+            String header = MethodUtils.invokeMethod(obj, "getHeader", Span.SPAN).toString();
+            if (Strings.isNullOrEmpty(header)) {
+                return null;
             }
-
+            return JSON.parseObject(header, Span.class);
         } catch (Exception e) {
             log.info("http extract span ,error", e);
         }
@@ -63,25 +60,33 @@ public class HttpEventListener extends BaseEventListener {
     @Override
     public void assembleRequest(BeforeEvent event, Invocation invocation) {
         // void service(HttpServletRequest req, HttpServletResponse resp)
-        if (!(event.argumentArray[0] instanceof HttpServletRequest)) {
-            return;
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(event.javaClassLoader);
+        try {
+            if (!(event.argumentArray[0] instanceof HttpServletRequest)) {
+                return;
+            }
+            HttpServletRequest req = (HttpServletRequest) event.argumentArray[0];
+            invocation.setUri(req.getRequestURI());
+            invocation.setUrl(new String(req.getRequestURL()));
+            invocation.setMethodName(req.getMethod());
+            invocation.setContentType(req.getContentType());
+            invocation.setHttpPort(req.getLocalPort());
+            setupHeaders(invocation, req);
+            setupParameters(invocation, req);
+            setupBody(invocation, req);
+        } catch (Exception e) {
+            log.error("http assembleRequest error", e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
-        HttpServletRequest req = (HttpServletRequest) event.argumentArray[0];
-        invocation.setUri(req.getRequestURI());
-        invocation.setUrl(new String(req.getRequestURL()));
-        invocation.setMethodName(req.getMethod());
-        invocation.setContentType(req.getContentType());
-        invocation.setHttpPort(req.getLocalPort());
-        setupHeaders(invocation, req);
-        setupParameters(invocation, req);
-        setupBody(invocation, req);
     }
 
     @Override
     public void assembleResponse(ReturnEvent event, Invocation invocation) {
         Invocation originInvocation = InvocationCache.get(invocation.getInvokeId());
-        if(Objects.isNull(originInvocation)){
-            log.error("assembleResponse error ,can not get Invocation" );
+        if (Objects.isNull(originInvocation)) {
+            log.error("assembleResponse error ,can not get Invocation");
         }
         // todo
     }

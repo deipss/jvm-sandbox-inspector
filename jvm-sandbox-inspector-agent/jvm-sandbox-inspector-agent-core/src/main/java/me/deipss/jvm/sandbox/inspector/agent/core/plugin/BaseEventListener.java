@@ -130,7 +130,7 @@ public abstract class BaseEventListener implements EventListener {
 
     public void toJson(Invocation invocation) {
         invocation.setRequestJson(JSON.toJSONString(invocation.getRequest()));
-        invocation.setResponseJson(JSON.toJSONString(invocation.getResponseJson()));
+        invocation.setResponseJson(JSON.toJSONString(invocation.getResponse()));
     }
 }
 

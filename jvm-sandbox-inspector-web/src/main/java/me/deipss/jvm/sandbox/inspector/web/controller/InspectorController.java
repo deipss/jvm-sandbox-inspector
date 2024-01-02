@@ -20,70 +20,71 @@ import java.util.Date;
 public class InspectorController {
 
 
+    @Autowired
+    private HeartBeatMapper heartBeatMapper;
 
-        @Autowired
-        private HeartBeatMapper heartBeatMapper;
+    @Autowired
+    private InvocationMapper invocationMapper;
 
-        @Autowired
-        private InvocationMapper invocationMapper;
-
-        @GetMapping("/heartBeat")
-        public void heartBeat(@ModelAttribute HeartBeatRequest heartBeat) {
-                heartBeatMapper.insert(toHeartBeatDO(heartBeat));
-        }
+    @GetMapping("/heartBeat")
+    public void heartBeat(@ModelAttribute HeartBeatRequest heartBeat) {
+        log.info("heartBeat ={}", JSON.toJSONString(heartBeat));
+        heartBeatMapper.insert(toHeartBeatDO(heartBeat));
+    }
 
 
-        @PostMapping("/dataSync")
-        public void dataSync(@RequestBody Invocation invocation) {
-                invocationMapper.insertSelective(toInvocationDO(invocation));
-        }
+    @PostMapping("/dataSync")
+    public void dataSync(@RequestBody Invocation invocation) {
+        log.info("dataSync ={}", JSON.toJSONString(invocation));
+        invocationMapper.insertSelective(toInvocationDO(invocation));
+    }
 
-        HeartBeatDO toHeartBeatDO(HeartBeatRequest heartBeat){
-            HeartBeatDO heartBeatDO = new HeartBeatDO();
-            heartBeatDO.setApp(heartBeat.getApp());
-            heartBeatDO.setIp(heartBeat.getIp());
-            heartBeatDO.setVersion(heartBeat.getVersion());
-            heartBeatDO.setBeatTime(new Date(Long.parseLong(heartBeat.getBeatTime())));
-            heartBeatDO.setEnvTag(heartBeat.getEnvTag());
-            heartBeatDO.setPort(heartBeat.getPort());
-            heartBeatDO.setModuleStatus(heartBeat.getModuleStatus());
-            return heartBeatDO;
-        }
+    HeartBeatDO toHeartBeatDO(HeartBeatRequest heartBeat) {
+        HeartBeatDO heartBeatDO = new HeartBeatDO();
+        heartBeatDO.setApp(heartBeat.getApp());
+        heartBeatDO.setIp(heartBeat.getIp());
+        heartBeatDO.setVersion(heartBeat.getVersion());
+        heartBeatDO.setBeatTime(new Date(Long.parseLong(heartBeat.getBeatTime())));
+        heartBeatDO.setEnvTag(heartBeat.getEnvTag());
+        heartBeatDO.setPort(heartBeat.getPort());
+        heartBeatDO.setModuleStatus(heartBeat.getModuleStatus());
+        return heartBeatDO;
+    }
 
-        InvocationDO toInvocationDO(Invocation invocation){
-            InvocationDO invocationDO = new InvocationDO();
-            invocationDO.setProtocol(invocation.getProtocol());
-            invocationDO.setTraceId(invocation.getTraceId());
-            invocationDO.setUk(invocation.getUk());
-            invocationDO.setPreUk(invocation.getPreUk());
-            invocationDO.setInvokeId(invocation.getInvokeId());
-            invocationDO.setInnerEntrance(invocation.isInnerEntrance());
-            invocationDO.setOuterEntrance(invocation.isOuterEntrance());
-            invocationDO.setRequestJson(invocation.getRequestJson());
-            invocationDO.setClassName(invocation.getClassName());
-            invocationDO.setMethodName(invocation.getMethodName());
-            invocationDO.setRpcContext(JSON.toJSONString(invocation.getRpcContext()));
-            invocationDO.setResponseJson(invocation.getResponseJson());
-            invocationDO.setThrowableMsg(invocation.getThrowableMsg());
-            invocationDO.setThrowableClass(invocation.getThrowableClass());
-            invocationDO.setSql(invocation.getSql());
-            invocationDO.setTopic(invocation.getTopic());
-            invocationDO.setMsgId(invocation.getMsgId());
-            invocationDO.setTags(invocation.getTags());
-            invocationDO.setMqBody(invocation.getMqBody());
-            invocationDO.setStart(invocation.getStart());
-            invocationDO.setEnd(invocation.getEnd());
-            invocationDO.setStartTime(new Date(invocation.getStart()));
-            invocationDO.setEndTime(new Date(invocation.getEnd()));
-            invocationDO.setIp(invocation.getIp());
-            invocationDO.setHttpPort(invocation.getHttpPort());
-            invocationDO.setUri(invocation.getUri());
-            invocationDO.setUrl(invocation.getUrl());
-            invocationDO.setContentType(invocation.getContentType());
-            invocationDO.setHttpBody(invocation.getHttpBody());
-            invocationDO.setHttpHeaders(JSON.toJSONString(invocation.getHttpHeaders()));
-            invocationDO.setHttpParameters(JSON.toJSONString(invocation.getHttpParameters()));
-            return invocationDO;
+    InvocationDO toInvocationDO(Invocation invocation) {
+        InvocationDO invocationDO = new InvocationDO();
+        invocationDO.setProtocol(invocation.getProtocol());
+        invocationDO.setTraceId(invocation.getTraceId());
+        invocationDO.setUk(invocation.getUk());
+        invocationDO.setPreUk(invocation.getPreUk());
+        invocationDO.setInvokeId(invocation.getInvokeId());
+        invocationDO.setInnerEntrance(invocation.isInnerEntrance());
+        invocationDO.setOuterEntrance(invocation.isOuterEntrance());
+        invocationDO.setRequestJson(invocation.getRequestJson());
+        invocationDO.setClassName(invocation.getClassName());
+        invocationDO.setMethodName(invocation.getMethodName());
+        invocationDO.setRpcContext(JSON.toJSONString(invocation.getRpcContext()));
+        invocationDO.setResponseJson(invocation.getResponseJson());
+        invocationDO.setThrowableMsg(invocation.getThrowableMsg());
+        invocationDO.setThrowableClass(invocation.getThrowableClass());
+        invocationDO.setSql(invocation.getSql());
+        invocationDO.setTopic(invocation.getTopic());
+        invocationDO.setMsgId(invocation.getMsgId());
+        invocationDO.setTags(invocation.getTags());
+        invocationDO.setMqBody(invocation.getMqBody());
+        invocationDO.setStart(invocation.getStart());
+        invocationDO.setEnd(invocation.getEnd());
+        invocationDO.setStartTime(new Date(invocation.getStart()));
+        invocationDO.setEndTime(new Date(invocation.getEnd()));
+        invocationDO.setIp(invocation.getIp());
+        invocationDO.setHttpPort(invocation.getHttpPort());
+        invocationDO.setUri(invocation.getUri());
+        invocationDO.setUrl(invocation.getUrl());
+        invocationDO.setContentType(invocation.getContentType());
+        invocationDO.setHttpBody(invocation.getHttpBody());
+        invocationDO.setHttpHeaders(JSON.toJSONString(invocation.getHttpHeaders()));
+        invocationDO.setHttpParameters(JSON.toJSONString(invocation.getHttpParameters()));
+        return invocationDO;
 
-        }
+    }
 }
