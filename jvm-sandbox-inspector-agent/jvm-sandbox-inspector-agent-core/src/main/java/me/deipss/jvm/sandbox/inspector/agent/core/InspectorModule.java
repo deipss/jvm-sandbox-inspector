@@ -12,7 +12,11 @@ import com.alibaba.jvm.sandbox.api.resource.ModuleManager;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.Constant;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageRequest;
+import me.deipss.jvm.sandbox.inspector.agent.api.service.HeartBeatService;
+import me.deipss.jvm.sandbox.inspector.agent.api.service.InvocationSendService;
+import me.deipss.jvm.sandbox.inspector.agent.api.service.MockManageService;
 import me.deipss.jvm.sandbox.inspector.agent.core.impl.HeartBeatServiceImpl;
+import me.deipss.jvm.sandbox.inspector.agent.core.impl.InvocationSendServiceImpl;
 import me.deipss.jvm.sandbox.inspector.agent.core.impl.MockManageServiceImpl;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.concurrent.TtlConcurrentPlugin;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo.DubboConsumerPlugin;
@@ -21,13 +25,11 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugin.http.HttpPlugin;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.jdbc.JdbcPlugin;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.rocket.RocketMqConsumerPlugin;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.rocket.RocketMqSendPlugin;
-import me.deipss.jvm.sandbox.inspector.agent.core.util.InvocationSendUtil;
 import org.kohsuke.MetaInfServices;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.channels.NonReadableChannelException;
 import java.util.List;
 
 @MetaInfServices(Module.class)
@@ -46,9 +48,9 @@ public class InspectorModule implements Module, ModuleLifecycle {
     @Resource
     private LoadedClassDataSource loadedClassDataSource;
 
-    private MockManageServiceImpl mockManageService;
-
-    private HeartBeatServiceImpl heartBeatService;
+    private MockManageService mockManageService;
+    private HeartBeatService heartBeatService;
+    private InvocationSendService invocationSend;
 
 
     @Override
@@ -72,28 +74,28 @@ public class InspectorModule implements Module, ModuleLifecycle {
 
     @Override
     public void loadCompleted() {
-        JdbcPlugin jdbcPlugin = new JdbcPlugin();
+        invocationSend = new InvocationSendServiceImpl();
+
+        JdbcPlugin jdbcPlugin = new JdbcPlugin(invocationSend);
         jdbcPlugin.watch(moduleEventWatcher);
 
         TtlConcurrentPlugin ttlConcurrentPlugin = new TtlConcurrentPlugin();
         ttlConcurrentPlugin.watch(moduleEventWatcher);
 
-        DubboConsumerPlugin dubboConsumerPlugin = new DubboConsumerPlugin();
+        DubboConsumerPlugin dubboConsumerPlugin = new DubboConsumerPlugin(invocationSend);
         dubboConsumerPlugin.watch(moduleEventWatcher);
 
-        DubboProviderPlugin dubboProviderPlugin = new DubboProviderPlugin();
+        DubboProviderPlugin dubboProviderPlugin = new DubboProviderPlugin(invocationSend);
         dubboProviderPlugin.watch(moduleEventWatcher);
 
-        HttpPlugin httpPlugin = new HttpPlugin();
+        HttpPlugin httpPlugin = new HttpPlugin(invocationSend);
         httpPlugin.watch(moduleEventWatcher);
 
-        RocketMqConsumerPlugin rocketMqConsumerPlugin = new RocketMqConsumerPlugin();
+        RocketMqConsumerPlugin rocketMqConsumerPlugin = new RocketMqConsumerPlugin(invocationSend);
         rocketMqConsumerPlugin.watch(moduleEventWatcher);
 
-        RocketMqSendPlugin rocketMqSendPlugin = new RocketMqSendPlugin();
+        RocketMqSendPlugin rocketMqSendPlugin = new RocketMqSendPlugin(invocationSend);
         rocketMqSendPlugin.watch(moduleEventWatcher);
-
-        InvocationSendUtil.start();
 
         mockManageService = new MockManageServiceImpl(moduleEventWatcher);
         heartBeatService = new HeartBeatServiceImpl();

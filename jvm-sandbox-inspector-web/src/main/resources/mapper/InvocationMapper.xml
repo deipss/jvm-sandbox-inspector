@@ -74,16 +74,16 @@
     <insert id="insertSelective">
         INSERT INTO t_invocation
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="protocol != null">
+            <if test="protocol != null and protocol != ''">
                 protocol,
             </if>
-            <if test="traceId != null">
+            <if test="traceId != null and traceId != ''">
                 traceId,
             </if>
-            <if test="uk != null">
+            <if test="uk != null and uk != ''">
                 uk,
             </if>
-            <if test="preUk != null">
+            <if test="preUk != null and preUk != ''">
                 preUk,
             </if>
             <if test="invokeId != null">
@@ -95,40 +95,40 @@
             <if test="outerEntrance != null">
                 outerEntrance,
             </if>
-            <if test="requestJson != null">
+            <if test="requestJson != null and requestJson != ''">
                 requestJson,
             </if>
-            <if test="className != null">
+            <if test="className != null and className != ''">
                 className,
             </if>
-            <if test="methodName != null">
+            <if test="methodName != null and methodName != ''">
                 methodName,
             </if>
-            <if test="rpcContext != null">
+            <if test="rpcContext != null and rpcContext != ''">
                 rpcContext,
             </if>
-            <if test="responseJson != null">
+            <if test="responseJson != null and responseJson != ''">
                 responseJson,
             </if>
-            <if test="throwableMsg != null">
+            <if test="throwableMsg != null and throwableMsg != ''">
                 throwableMsg,
             </if>
-            <if test="throwableClass != null">
+            <if test="throwableClass != null and throwableClass != ''">
                 throwableClass,
             </if>
-            <if test="sql != null">
+            <if test="sql != null and sql != ''">
                 `sql`,
             </if>
-            <if test="topic != null">
+            <if test="topic != null and topic != ''">
                 topic,
             </if>
-            <if test="msgId != null">
+            <if test="msgId != null and msgId != ''">
                 msgId,
             </if>
-            <if test="tags != null">
+            <if test="tags != null and tags != ''">
                 tags,
             </if>
-            <if test="mqBody != null">
+            <if test="mqBody != null and mqBody != ''">
                 mqBody,
             </if>
             <if test="start != null">
@@ -143,28 +143,28 @@
             <if test="endTime != null">
                 endTime,
             </if>
-            <if test="ip != null">
+            <if test="ip != null and ip != ''">
                 ip,
             </if>
             <if test="httpPort != null">
                 httpPort,
             </if>
-            <if test="uri != null">
+            <if test="uri != null and uri != ''">
                 uri,
             </if>
-            <if test="url != null">
+            <if test="url != null and url != ''">
                 url,
             </if>
-            <if test="contentType != null">
+            <if test="contentType != null and contentType != ''">
                 contentType,
             </if>
-            <if test="httpBody != null">
+            <if test="httpBody != null and httpBody != ''">
                 httpBody,
             </if>
-            <if test="httpHeaders != null">
+            <if test="httpHeaders != null and httpHeaders != ''">
                 httpHeaders,
             </if>
-            <if test="httpParameters != null">
+            <if test="httpParameters != null and httpParameters != ''">
                 httpParameters
             </if>
         </trim>
@@ -173,16 +173,16 @@
             <if test="id != null">
                 #{id},
             </if>
-            <if test="protocol != null">
+            <if test="protocol != null and protocol != ''">
                 #{protocol},
             </if>
-            <if test="traceId != null">
+            <if test="traceId != null and traceId != ''">
                 #{traceId},
             </if>
-            <if test="uk != null">
+            <if test="uk != null and uk != ''">
                 #{uk},
             </if>
-            <if test="preUk != null">
+            <if test="preUk != null and preUk != ''">
                 #{preUk},
             </if>
             <if test="invokeId != null">
@@ -194,40 +194,40 @@
             <if test="outerEntrance != null">
                 #{outerEntrance},
             </if>
-            <if test="requestJson != null">
+            <if test="requestJson != null and requestJson != ''">
                 #{requestJson},
             </if>
-            <if test="className != null">
+            <if test="className != null and className != ''">
                 #{className},
             </if>
-            <if test="methodName != null">
+            <if test="methodName != null and methodName != ''">
                 #{methodName},
             </if>
-            <if test="rpcContext != null">
+            <if test="rpcContext != null and rpcContext != ''">
                 #{rpcContext},
             </if>
-            <if test="responseJson != null">
+            <if test="responseJson != null and responseJson != ''">
                 #{responseJson},
             </if>
-            <if test="throwableMsg != null">
+            <if test="throwableMsg != null and throwableMsg != ''">
                 #{throwableMsg},
             </if>
-            <if test="throwableClass != null">
+            <if test="throwableClass != null and throwableClass != ''">
                 #{throwableClass},
             </if>
-            <if test="sql != null">
+            <if test="sql != null and sql != ''">
                 #{sql},
             </if>
-            <if test="topic != null">
+            <if test="topic != null and topic != ''">
                 #{topic},
             </if>
-            <if test="msgId != null">
+            <if test="msgId != null and msgId != ''">
                 #{msgId},
             </if>
-            <if test="tags != null">
+            <if test="tags != null and tags != ''">
                 #{tags},
             </if>
-            <if test="mqBody != null">
+            <if test="mqBody != null and mqBody != ''">
                 #{mqBody},
             </if>
             <if test="start != null">
@@ -242,28 +242,28 @@
             <if test="endTime != null">
                 #{endTime},
             </if>
-            <if test="ip != null">
+            <if test="ip != null and ip != ''">
                 #{ip},
             </if>
             <if test="httpPort != null">
                 #{httpPort},
             </if>
-            <if test="uri != null">
+            <if test="uri != null and uri != ''">
                 #{uri},
             </if>
-            <if test="url != null">
+            <if test="url != null and url != ''">
                 #{url},
             </if>
-            <if test="contentType != null">
+            <if test="contentType != null and contentType != ''">
                 #{contentType},
             </if>
-            <if test="httpBody != null">
+            <if test="httpBody != null and httpBody != ''">
                 #{httpBody},
             </if>
-            <if test="httpHeaders != null">
+            <if test="httpHeaders != null and httpHeaders != ''">
                 #{httpHeaders},
             </if>
-            <if test="httpParameters != null">
+            <if test="httpParameters != null and httpParameters != ''">
                 #{httpParameters}
             </if>
         </trim>

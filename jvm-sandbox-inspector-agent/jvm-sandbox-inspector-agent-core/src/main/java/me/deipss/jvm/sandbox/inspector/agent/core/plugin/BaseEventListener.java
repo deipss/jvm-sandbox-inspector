@@ -10,9 +10,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Span;
+import me.deipss.jvm.sandbox.inspector.agent.api.service.InvocationSendService;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
-import me.deipss.jvm.sandbox.inspector.agent.core.util.InvocationSendUtil;
+import me.deipss.jvm.sandbox.inspector.agent.core.impl.InvocationSendServiceImpl;
 
 import java.util.Date;
 import java.util.Objects;
@@ -24,6 +25,8 @@ public abstract class BaseEventListener implements EventListener {
     protected boolean entrance;
 
     protected String protocol;
+
+    protected InvocationSendService invocationSend;
 
     @Override
     public void onEvent(Event event) throws Throwable {
@@ -106,13 +109,13 @@ public abstract class BaseEventListener implements EventListener {
     public void sendInvocationReturn(ReturnEvent event) {
         Invocation invocation = InvocationCache.remove(event.invokeId);
         toJson(invocation);
-        InvocationSendUtil.send(invocation);
+        invocationSend.send(invocation);
     }
 
     public void sendInvocationThrow(ThrowsEvent event) {
         Invocation invocation = InvocationCache.remove(event.invokeId);
         toJson(invocation);
-        InvocationSendUtil.send(invocation);
+        invocationSend.send(invocation);
     }
 
 

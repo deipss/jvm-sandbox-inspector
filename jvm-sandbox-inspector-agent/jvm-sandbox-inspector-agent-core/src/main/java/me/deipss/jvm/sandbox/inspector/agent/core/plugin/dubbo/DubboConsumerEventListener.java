@@ -2,11 +2,10 @@ package me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.jvm.sandbox.api.event.BeforeEvent;
-import com.alibaba.jvm.sandbox.api.event.Event;
-import com.alibaba.jvm.sandbox.api.event.ReturnEvent;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Span;
+import me.deipss.jvm.sandbox.inspector.agent.api.service.InvocationSendService;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BaseEventListener;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
@@ -21,8 +20,8 @@ import java.util.Map;
 public class DubboConsumerEventListener extends BaseEventListener {
 
 
-    public DubboConsumerEventListener(boolean entrance, String protocol) {
-        super(entrance, protocol);
+    public DubboConsumerEventListener(boolean entrance, String protocol, InvocationSendService invocationSendService) {
+        super(entrance, protocol,invocationSendService);
     }
 
     @Override

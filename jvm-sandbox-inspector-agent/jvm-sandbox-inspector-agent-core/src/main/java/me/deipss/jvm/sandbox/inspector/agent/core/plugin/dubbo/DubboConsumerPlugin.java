@@ -5,12 +5,13 @@ import com.alibaba.jvm.sandbox.api.listener.ext.EventWatchBuilder;
 import com.alibaba.jvm.sandbox.api.resource.ModuleEventWatcher;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.Constant;
+import me.deipss.jvm.sandbox.inspector.agent.api.service.InvocationSendService;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BasePlugin;
 
 @Slf4j
 public class DubboConsumerPlugin extends BasePlugin {
-    public DubboConsumerPlugin() {
-        super(Constant.DUBBO_CONSUMER,false);
+    public DubboConsumerPlugin(InvocationSendService invocationSendService) {
+        super(Constant.DUBBO_CONSUMER,false,invocationSendService);
     }
 
 
@@ -26,6 +27,6 @@ public class DubboConsumerPlugin extends BasePlugin {
                 // dubbo 3.0
                 .onClass("org.apache.dubbo.rpc.cluster.filter.support.ConsumerContextFilter").includeBootstrap()
                 .onBehavior("invoke")
-                .onWatch(new DubboConsumerEventListener(entrance, protocol), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
+                .onWatch(new DubboConsumerEventListener(entrance, protocol,invocationSendService), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
     }
 }

@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class HeartBeatServiceImpl implements HeartBeatService {
 
-
     private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
             new BasicThreadFactory.Builder().namingPattern("heartbeat-pool-%d").daemon(true).build());
 
@@ -37,14 +36,14 @@ public class HeartBeatServiceImpl implements HeartBeatService {
         heartBeatMap.put("app",heartBeat.getApp());
         heartBeatMap.put("ip",heartBeat.getIp());
         heartBeatMap.put("version",heartBeat.getVersion());
-        heartBeatMap.put("beatTime",heartBeat.getBeatTime().toString());
+        heartBeatMap.put("beatTime",String.valueOf(heartBeat.getBeatTime().getTime()));
         heartBeatMap.put("envTag",heartBeat.getEnvTag());
         heartBeatMap.put("port",heartBeat.getPort());
         heartBeatMap.put("moduleStatus",heartBeat.getPort());
         HttpUtil.get(ConfigUtil.getHeartUrl(),heartBeatMap,null);
     }
 
-
+    @Override
     public synchronized void start() {
         log.info("heart start");
         executorService.scheduleAtFixedRate(() -> {

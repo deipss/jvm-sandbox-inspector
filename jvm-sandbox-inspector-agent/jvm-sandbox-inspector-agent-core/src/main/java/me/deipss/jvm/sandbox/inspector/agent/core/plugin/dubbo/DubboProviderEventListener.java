@@ -5,6 +5,7 @@ import com.alibaba.jvm.sandbox.api.event.BeforeEvent;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Span;
+import me.deipss.jvm.sandbox.inspector.agent.api.service.InvocationSendService;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BaseEventListener;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -17,8 +18,8 @@ import java.util.Objects;
 
 @Slf4j
 public class DubboProviderEventListener extends BaseEventListener {
-    public DubboProviderEventListener(boolean entrance, String protocol) {
-        super(entrance, protocol);
+    public DubboProviderEventListener(boolean entrance, String protocol, InvocationSendService invocationSendService) {
+        super(entrance, protocol, invocationSendService);
     }
 
     @Override
