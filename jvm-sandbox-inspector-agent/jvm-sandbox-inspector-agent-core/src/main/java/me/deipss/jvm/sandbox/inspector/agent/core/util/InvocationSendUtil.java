@@ -38,6 +38,7 @@ public class InvocationSendUtil {
     }
 
     public static void start() {
+        log.info("InvocationSendUtil start");
         for (int i = 0; i < consumerThreadNum; i++) {
             queueConsumerTaskExecutor.submit(new QueueConsumerTask());
         }

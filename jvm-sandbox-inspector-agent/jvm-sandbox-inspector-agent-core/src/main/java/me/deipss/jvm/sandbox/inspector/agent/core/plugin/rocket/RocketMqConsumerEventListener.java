@@ -41,13 +41,15 @@ public class RocketMqConsumerEventListener extends BaseEventListener {
         try {
             Object msgExt = MethodUtils.invokeMethod(mqArg0, "get", 0);
             String topic = String.valueOf(MethodUtils.invokeMethod(msgExt, "getTopic"));
-            String msgId = String.valueOf(MethodUtils.invokeMethod(msgExt, "getMsgId"));
-            String tags = String.valueOf(MethodUtils.invokeMethod(msgExt, "getTags"));
             String body = new String((byte[]) MethodUtils.invokeMethod(msgExt, "getBody"));
             invocation.setTopic(topic);
-            invocation.setMsgId(msgId);
-            invocation.setTags(tags);
             invocation.setMqBody(body);
+            if (msgExt.getClass().getCanonicalName().endsWith("MessageExt")) {
+                String msgId = String.valueOf(MethodUtils.invokeMethod(msgExt, "getMsgId"));
+                String tags = String.valueOf(MethodUtils.invokeMethod(msgExt, "getTags"));
+                invocation.setMsgId(msgId);
+                invocation.setTags(tags);
+            }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             log.error("rocket mq extract assembleRequest error", e);
         }

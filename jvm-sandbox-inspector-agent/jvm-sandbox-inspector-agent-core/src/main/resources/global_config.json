@@ -1,7 +1,7 @@
 
 {
-  "heartUrl": "demoData",
-  "dataSendUrl": "demoData",
+  "heartUrl": "192.168.0.2:8088/api/inspector/heartBeat",
+  "dataSendUrl": "192.168.0.2:8088/api/inspector/dataSync",
   "enablePlugins": [
     "demoData"
   ]

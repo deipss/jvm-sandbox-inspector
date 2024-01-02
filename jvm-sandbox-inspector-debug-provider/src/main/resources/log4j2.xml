@@ -3,7 +3,7 @@
     <!-- Logging Properties -->
     <Properties>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
-        <Property name="APP_LOG_ROOT">/opt/logs</Property>
+        <Property name="APP_LOG_ROOT">${sys:user.home}/logs</Property>
         <Property name="APP_NAME">jvm-sandbox-inspector-debug-provider</Property>
     </Properties>
     <Appenders>

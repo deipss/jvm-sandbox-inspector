@@ -46,6 +46,7 @@ public class HeartBeatServiceImpl implements HeartBeatService {
 
 
     public synchronized void start() {
+        log.info("heart start");
         executorService.scheduleAtFixedRate(() -> {
             try {
                 syncHeartBeat();

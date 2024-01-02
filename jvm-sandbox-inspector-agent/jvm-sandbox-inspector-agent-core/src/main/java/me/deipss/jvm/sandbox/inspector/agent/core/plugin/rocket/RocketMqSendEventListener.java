@@ -8,7 +8,7 @@ import me.deipss.jvm.sandbox.inspector.agent.api.domain.Span;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BaseEventListener;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
-import org.apache.dubbo.common.utils.MethodUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -24,7 +24,11 @@ public class RocketMqSendEventListener extends BaseEventListener {
             if (o.getClass().getSimpleName().equals("Message")) {
                 Invocation invocation = InvocationCache.get(event.invokeId);
                 Span span = new Span(Tracer.getTraceId(), invocation.getUk());
-                MethodUtils.invokeMethod(o, "putUserProperty", Span.SPAN, JSON.toJSONString(span));
+                try {
+                    MethodUtils.invokeMethod(o, "putUserProperty", Span.SPAN, JSON.toJSONString(span));
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    log.error("RocketMqSendEventListener transportSpan error",e );
+                }
                 return;
             }
         }
@@ -41,13 +45,15 @@ public class RocketMqSendEventListener extends BaseEventListener {
             if (o.getClass().getSimpleName().equals("Message")) {
                 try {
                     String topic = String.valueOf(org.apache.commons.lang3.reflect.MethodUtils.invokeMethod(o, "getTopic"));
-                    String msgId = String.valueOf(org.apache.commons.lang3.reflect.MethodUtils.invokeMethod(o, "getMsgId"));
-                    String tags = String.valueOf(org.apache.commons.lang3.reflect.MethodUtils.invokeMethod(o, "getTags"));
                     String body = new String((byte[]) org.apache.commons.lang3.reflect.MethodUtils.invokeMethod(o, "getBody"));
                     invocation.setTopic(topic);
-                    invocation.setMsgId(msgId);
-                    invocation.setTags(tags);
                     invocation.setMqBody(body);
+                    if (o.getClass().getCanonicalName().endsWith("MessageExt")) {
+                        String tags = String.valueOf(org.apache.commons.lang3.reflect.MethodUtils.invokeMethod(o, "getTags"));
+                        String msgId = String.valueOf(org.apache.commons.lang3.reflect.MethodUtils.invokeMethod(o, "getMsgId"));
+                        invocation.setMsgId(msgId);
+                        invocation.setTags(tags);
+                    }
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     log.error("rocket mq extract assembleRequest error", e);
                 }

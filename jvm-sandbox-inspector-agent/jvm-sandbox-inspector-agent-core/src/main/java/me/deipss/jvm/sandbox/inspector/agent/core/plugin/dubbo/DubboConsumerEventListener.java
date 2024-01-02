@@ -25,15 +25,19 @@ public class DubboConsumerEventListener extends BaseEventListener {
 
     @Override
     public void transportSpan(BeforeEvent event) {
-        ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(event.javaClassLoader);
-        Invocation invocation = InvocationCache.get(event.invokeId);
-        Map<String, String> attachments = RpcContext.getContext().getAttachments();
-        invocation.setRpcContext(new HashMap<>(attachments.size()));
-        invocation.getRpcContext().putAll(attachments);
-        Span span = new Span(Tracer.getTraceId(), invocation.getUk());
-        RpcContext.getContext().setAttachment(Span.SPAN, JSON.toJSONString(span));
-        Thread.currentThread().setContextClassLoader(sandboxClassLoader);
+        try {
+            ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(event.javaClassLoader);
+            Invocation invocation = InvocationCache.get(event.invokeId);
+            Map<String, String> attachments = RpcContext.getContext().getAttachments();
+            invocation.setRpcContext(new HashMap<>(attachments.size()));
+            invocation.getRpcContext().putAll(attachments);
+            Span span = new Span(Tracer.getTraceId(), invocation.getUk());
+            RpcContext.getContext().setAttachment(Span.SPAN, JSON.toJSONString(span));
+            Thread.currentThread().setContextClassLoader(sandboxClassLoader);
+        } catch (Exception e) {
+            log.error("DubboConsumerEventListener transportSpan error, eventId={}",event.invokeId,e );
+        }
     }
 
     @Override

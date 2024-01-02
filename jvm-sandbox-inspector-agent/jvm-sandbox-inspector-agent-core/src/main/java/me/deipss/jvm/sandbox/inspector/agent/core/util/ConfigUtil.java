@@ -10,18 +10,19 @@ import java.util.List;
 
 @Slf4j
 public class ConfigUtil {
+    private static GlobalConfig config;
 
     static {
         InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("global_config.json");
         try {
             config = JSON.parseObject(resourceAsStream, GlobalConfig.class);
+            log.info("global_config init success, config={}",config.toString());
         } catch (IOException e) {
             log.error("global_config init error", e);
         }
 
     }
 
-    private static GlobalConfig config;
 
     public static String getHeartUrl() {
         return config.getHeartUrl();

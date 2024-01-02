@@ -13,6 +13,7 @@ import org.apache.dubbo.rpc.RpcContext;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public class DubboProviderEventListener extends BaseEventListener {
@@ -27,8 +28,18 @@ public class DubboProviderEventListener extends BaseEventListener {
     @Override
     public Span extractSpan(BeforeEvent event) {
         try {
-            String span = MethodUtils.invokeMethod(event.argumentArray[1], "getAttachment", Span.SPAN).toString();
-            return JSON.parseObject(span,Span.class);
+            Object o = event.argumentArray[1];
+            if (o.getClass().getCanonicalName().endsWith("Invocation")) {
+                Object spanObj = MethodUtils.invokeMethod(o, "getAttachment", Span.SPAN);
+                if (Objects.isNull(spanObj)) {
+                    log.error("DubboProviderEventListener extractSpan span is null");
+                    return null;
+                }
+                String span = spanObj.toString();
+                return JSON.parseObject(span, Span.class);
+            } else {
+                log.error("DubboProviderEventListener extractSpan error, argumentArray1 not Invocation but ={} ", o.getClass().getCanonicalName());
+            }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             log.error("dubbo consumer assembleRequest error", e);
         }

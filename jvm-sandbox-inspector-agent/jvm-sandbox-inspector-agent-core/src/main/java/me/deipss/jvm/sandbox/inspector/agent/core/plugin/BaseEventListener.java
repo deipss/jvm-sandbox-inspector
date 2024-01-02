@@ -30,12 +30,12 @@ public abstract class BaseEventListener implements EventListener {
         try {
             switch (event.type) {
                 case BEFORE:
-                    if(entrance){
+                    if (entrance) {
                         Span span = extractSpan(((BeforeEvent) event));
-                        if(Objects.isNull(span)) {
+                        if (Objects.isNull(span)) {
                             Tracer.start(((BeforeEvent) event).invokeId, protocol);
-                        }else {
-                            Tracer.start(span.getTraceId(),protocol,((BeforeEvent) event).invokeId,null,span.getOverMachineUk());
+                        } else {
+                            Tracer.start(span.getTraceId(), protocol, ((BeforeEvent) event).invokeId, null, span.getOverMachineUk());
                         }
                     }
                     doBefore((BeforeEvent) event);
@@ -70,12 +70,16 @@ public abstract class BaseEventListener implements EventListener {
         invocation.setMethodName(event.javaMethodName);
         invocation.setClassName(event.javaClassName);
         InvocationCache.put(event.invokeId, invocation);
-        assembleRequest(event,invocation);
+        assembleRequest(event, invocation);
     }
 
     public void doReturn(ReturnEvent event) {
         Invocation invocation = InvocationCache.get(event.invokeId);
-        assembleResponse(event,invocation);
+        if (invocation == null) {
+            log.error("doReturn invocation is null,class ={}", this.getClass().getCanonicalName());
+            return;
+        }
+        assembleResponse(event, invocation);
         invocation.setEnd(new Date().toInstant().toEpochMilli());
 
     }
@@ -93,7 +97,7 @@ public abstract class BaseEventListener implements EventListener {
         invocation.setInnerEntrance(entrance);
         invocation.setProtocol(protocol);
         invocation.setUk(Tracer.initUk(event.invokeId));
-        invocation.setPreUk(entrance?Tracer.getOverMachineUk():Tracer.getPreUk(event.invokeId,protocol));
+        invocation.setPreUk(entrance ? Tracer.getOverMachineUk() : Tracer.getPreUk(event.invokeId, protocol));
         invocation.setIp(Tracer.getLocalIp());
         invocation.setTraceId(Tracer.getTraceId());
         return invocation;
@@ -113,16 +117,18 @@ public abstract class BaseEventListener implements EventListener {
 
 
     public abstract void transportSpan(BeforeEvent event);
+
     public abstract Span extractSpan(BeforeEvent event);
 
-    public abstract void assembleRequest(BeforeEvent event ,Invocation invocation);
-    public  void assembleResponse(ReturnEvent event ,Invocation invocation){
-        if(event.object!=null) {
+    public abstract void assembleRequest(BeforeEvent event, Invocation invocation);
+
+    public void assembleResponse(ReturnEvent event, Invocation invocation) {
+        if (event.object != null) {
             invocation.setResponse(event.object);
         }
     }
 
-    public void toJson(Invocation invocation){
+    public void toJson(Invocation invocation) {
         invocation.setRequestJson(JSON.toJSONString(invocation.getRequest()));
         invocation.setResponseJson(JSON.toJSONString(invocation.getResponseJson()));
     }
