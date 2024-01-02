@@ -46,7 +46,11 @@ public class HttpEventListener extends BaseEventListener {
     public Span extractSpan(BeforeEvent event) {
         try {
             Object obj = event.argumentArray[0];
-            String header = MethodUtils.invokeMethod(obj, "getHeader", Span.SPAN).toString();
+            Object spanObj = MethodUtils.invokeMethod(obj, "getHeader", Span.SPAN);
+            if (spanObj ==null ) {
+                return null;
+            }
+            String header = spanObj.toString();
             if (Strings.isNullOrEmpty(header)) {
                 return null;
             }
