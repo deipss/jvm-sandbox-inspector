@@ -17,7 +17,6 @@ public class InvocationSendServiceImpl implements InvocationSendService {
     private final ConcurrentLinkedQueue<Invocation> queue = new ConcurrentLinkedQueue<>();
 
     private final int maxQueueSize = 4096;
-
     private final int consumerThreadNum = 4;
 
     public InvocationSendServiceImpl() {
@@ -29,9 +28,7 @@ public class InvocationSendServiceImpl implements InvocationSendService {
             if (!queueConsumerTaskExecutor.isShutdown()) {
                 log.warn("queueConsumerTaskExecutor losing {}", queueConsumerTaskExecutor.shutdownNow().size());
             }
-            if (!invocationSendExecutor.isShutdown()) {
-                log.warn("invocationSendExecutor losing {}", invocationSendExecutor.shutdownNow().size());
-            }
+
             log.info("invocationSendExecutor close");
         }));
     }
@@ -40,13 +37,6 @@ public class InvocationSendServiceImpl implements InvocationSendService {
             2L, TimeUnit.MINUTES, new LinkedBlockingDeque<>(128),
             new BasicThreadFactory.Builder().namingPattern("invocation-queue-pool-%d").build(),
             new ThreadPoolExecutor.CallerRunsPolicy());
-
-    private ExecutorService invocationSendExecutor = new ThreadPoolExecutor(1,
-            1,
-            30L, TimeUnit.SECONDS, new LinkedBlockingDeque<>(4096),
-            new BasicThreadFactory.Builder().namingPattern("invocation-sent-pool-%d").build(),
-            new ThreadPoolExecutor.CallerRunsPolicy());
-
     @Override
     public void send(Invocation invocation) {
         final int size = queue.size();
