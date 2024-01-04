@@ -15,6 +15,7 @@ import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
 import me.deipss.jvm.sandbox.inspector.agent.core.impl.InvocationSendServiceImpl;
 
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Objects;
 
@@ -33,15 +34,16 @@ public abstract class BaseEventListener implements EventListener {
         try {
             switch (event.type) {
                 case BEFORE:
+                    Span span = null;
                     if (entrance) {
-                        Span span = extractSpan(((BeforeEvent) event));
+                         span = extractSpan(((BeforeEvent) event));
                         if (Objects.isNull(span)) {
                             Tracer.start(((BeforeEvent) event).invokeId, protocol);
                         } else {
                             Tracer.start(span.getTraceId(), protocol, ((BeforeEvent) event).invokeId, null, span.getOverMachineUk());
                         }
                     }
-                    doBefore((BeforeEvent) event);
+                    doBefore((BeforeEvent) event,span);
                     transportSpan((BeforeEvent) event);
                     break;
                 case RETURN:
@@ -66,12 +68,9 @@ public abstract class BaseEventListener implements EventListener {
         }
     }
 
-    public void doBefore(BeforeEvent event) {
+    public void doBefore(BeforeEvent event,Span span) {
         Invocation invocation = initInvocation(event);
-        invocation.setInvokeId(event.invokeId);
-        invocation.setStart(new Date().toInstant().toEpochMilli());
-        invocation.setMethodName(event.javaMethodName);
-        invocation.setClassName(event.javaClassName);
+        invocation.setOuterEntrance(outerEntrance(span));
         InvocationCache.put(event.invokeId, invocation);
         assembleRequest(event, invocation);
     }
@@ -97,13 +96,21 @@ public abstract class BaseEventListener implements EventListener {
 
     public Invocation initInvocation(BeforeEvent event) {
         Invocation invocation = new Invocation();
+        doInitInvocation(event, invocation);
+        return invocation;
+    }
+
+    protected void doInitInvocation(BeforeEvent event, Invocation invocation) {
         invocation.setInnerEntrance(entrance);
+        invocation.setInvokeId(event.invokeId);
+        invocation.setStart(new Date().toInstant().toEpochMilli());
+        invocation.setMethodName(event.javaMethodName);
+        invocation.setClassName(event.javaClassName);
         invocation.setProtocol(protocol);
         invocation.setUk(Tracer.initUk(event.invokeId));
         invocation.setPreUk(entrance ? Tracer.getOverMachineUk() : Tracer.getPreUk(event.invokeId, protocol));
         invocation.setIp(Tracer.getLocalIp());
         invocation.setTraceId(Tracer.getTraceId());
-        return invocation;
     }
 
     public void sendInvocationReturn(ReturnEvent event) {
@@ -119,9 +126,13 @@ public abstract class BaseEventListener implements EventListener {
     }
 
 
-    public abstract void transportSpan(BeforeEvent event);
+    public  void transportSpan(BeforeEvent event){
 
-    public abstract Span extractSpan(BeforeEvent event);
+    }
+
+    public  Span extractSpan(BeforeEvent event){
+        return null;
+    }
 
     public abstract void assembleRequest(BeforeEvent event, Invocation invocation);
 
@@ -134,6 +145,10 @@ public abstract class BaseEventListener implements EventListener {
     public void toJson(Invocation invocation) {
         invocation.setRequestJson(JSON.toJSONString(invocation.getRequest()));
         invocation.setResponseJson(JSON.toJSONString(invocation.getResponse()));
+    }
+
+    private boolean outerEntrance(Span span){
+        return entrance && span==null;
     }
 }
 

@@ -18,10 +18,6 @@ public class RocketMqConsumerEventListener extends BaseEventListener {
     }
 
     @Override
-    public void transportSpan(BeforeEvent event) {
-    }
-
-    @Override
     public Span extractSpan(BeforeEvent event) {
         Object mqArg0 = event.argumentArray[0];
         try {

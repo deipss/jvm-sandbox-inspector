@@ -13,14 +13,6 @@ public class JdbcEventListener extends BaseEventListener {
         super(entrance, protocol, invocationSendService);
     }
 
-    @Override
-    public void transportSpan(BeforeEvent event) {
-    }
-
-    @Override
-    public Span extractSpan(BeforeEvent event) {
-        return null;
-    }
 
     @Override
     public void assembleRequest(BeforeEvent event, Invocation invocation) {

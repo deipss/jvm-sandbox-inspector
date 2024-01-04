@@ -29,19 +29,11 @@ public class HttpEventListener extends BaseEventListener {
     @Override
     public Invocation initInvocation(BeforeEvent event) {
         HttpInvocation invocation = new HttpInvocation();
-        invocation.setInnerEntrance(entrance);
-        invocation.setProtocol(protocol);
-        invocation.setUk(Tracer.initUk(event.invokeId));
-        invocation.setPreUk(entrance ? Tracer.getOverMachineUk() : Tracer.getPreUk(event.invokeId, protocol));
-        invocation.setIp(Tracer.getLocalIp());
-        invocation.setTraceId(Tracer.getTraceId());
+        doInitInvocation(event,invocation);
         log.info("http initInvocation done");
         return invocation;
     }
 
-    @Override
-    public void transportSpan(BeforeEvent event) {
-    }
 
     @Override
     public Span extractSpan(BeforeEvent event) {
@@ -144,7 +136,7 @@ public class HttpEventListener extends BaseEventListener {
                 try {
                     bufferedReader.close();
                 } catch (IOException e) {
-                    log.error("setupboyd bufferedReader close error", e);
+                    log.error("setup body bufferedReader close error", e);
                 }
             }
         }

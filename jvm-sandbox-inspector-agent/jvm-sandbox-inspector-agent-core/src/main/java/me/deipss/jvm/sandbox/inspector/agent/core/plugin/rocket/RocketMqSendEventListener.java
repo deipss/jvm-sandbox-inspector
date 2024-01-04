@@ -35,10 +35,6 @@ public class RocketMqSendEventListener extends BaseEventListener {
         }
     }
 
-    @Override
-    public Span extractSpan(BeforeEvent event) {
-        return null;
-    }
 
     @Override
     public void assembleRequest(BeforeEvent event, Invocation invocation) {

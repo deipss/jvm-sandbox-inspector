@@ -52,7 +52,7 @@ public class HeartBeatServiceImpl implements HeartBeatService {
             } catch (Exception e) {
                 log.error("error occurred when report heartbeat", e);
             }
-        }, 5, 3, TimeUnit.SECONDS);
+        }, 5, 3, TimeUnit.MINUTES);
     }
 
     public void stop() {

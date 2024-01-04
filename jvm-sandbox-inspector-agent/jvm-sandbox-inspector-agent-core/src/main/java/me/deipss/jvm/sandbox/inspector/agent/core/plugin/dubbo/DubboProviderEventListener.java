@@ -2,6 +2,7 @@ package me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.jvm.sandbox.api.event.BeforeEvent;
+import com.alibaba.jvm.sandbox.api.event.ReturnEvent;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Span;
@@ -20,10 +21,6 @@ import java.util.Objects;
 public class DubboProviderEventListener extends BaseEventListener {
     public DubboProviderEventListener(boolean entrance, String protocol, InvocationSendService invocationSendService) {
         super(entrance, protocol, invocationSendService);
-    }
-
-    @Override
-    public void transportSpan(BeforeEvent event) {
     }
 
     @Override
@@ -60,6 +57,16 @@ public class DubboProviderEventListener extends BaseEventListener {
             Thread.currentThread().setContextClassLoader(sandboxClassLoader);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             log.error("dubbo consumer assembleRequest error", e);
+        }
+    }
+
+
+    @Override
+    public void assembleResponse(ReturnEvent event, Invocation invocation) {
+        try {
+            invocation.setResponse(MethodUtils.invokeMethod(event.object, "getValue"));
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            log.error("dubbo provider assembleResponse error",e);
         }
     }
 }
