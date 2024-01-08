@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.Invocation;
+import me.deipss.jvm.sandbox.inspector.agent.core.plugin.http.copier.HttpServletResponseCopier;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,5 +15,5 @@ import javax.servlet.http.HttpServletResponse;
 @Data
 public class HttpInvocation extends Invocation {
 
-    private transient HttpServletResponse httpServletResponse;
+    private transient HttpServletResponseCopier httpServletResponseCopier;
 }
