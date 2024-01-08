@@ -40,6 +40,7 @@ public abstract class BaseEventListener implements EventListener {
                         if (Objects.isNull(span)) {
                             Tracer.start(((BeforeEvent) event).invokeId, protocol);
                         } else {
+                            log.info("span ={}",span );
                             Tracer.start(span.getTraceId(), protocol, ((BeforeEvent) event).invokeId, null, span.getOverMachineUk());
                         }
                     }
