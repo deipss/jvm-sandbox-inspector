@@ -13,9 +13,8 @@ import me.deipss.jvm.sandbox.inspector.agent.api.domain.Span;
 import me.deipss.jvm.sandbox.inspector.agent.api.service.InvocationSendService;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
-import me.deipss.jvm.sandbox.inspector.agent.core.impl.InvocationSendServiceImpl;
 
-import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Objects;
 

@@ -28,13 +28,17 @@ public class DubboProviderEventListener extends BaseEventListener {
         ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(event.javaClassLoader);
         try {
-            Object spanObj = RpcContext.getContext().get(Span.SPAN);
+            Object rpcContext = MethodUtils.invokeStaticMethod(RpcContext.class, "getContext");
+            Object spanObj = MethodUtils.invokeMethod(rpcContext, "get", Span.SPAN);
             if (Objects.isNull(spanObj)) {
                 log.error("DubboProviderEventListener extractSpan span is null");
                 return null;
             }
             String span = spanObj.toString();
             return JSON.parseObject(span, Span.class);
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            log.error("DubboProviderEventListener extractSpan error", e);
+            return null;
         } finally {
             Thread.currentThread().setContextClassLoader(sandboxClassLoader);
         }

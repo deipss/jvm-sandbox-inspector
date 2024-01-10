@@ -16,6 +16,7 @@ import org.apache.dubbo.rpc.RpcContext;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public class DubboConsumerEventListener extends BaseEventListener {
@@ -32,11 +33,15 @@ public class DubboConsumerEventListener extends BaseEventListener {
             Thread.currentThread().setContextClassLoader(event.javaClassLoader);
             log.info("DubboConsumerEventListener transportSpan, event classloader={},thread classloader={}",event.javaClassLoader.getClass().getCanonicalName(),sandboxClassLoader.getClass().getCanonicalName());
             Invocation invocation = InvocationCache.get(event.invokeId);
-            Map<String, String> attachments = RpcContext.getContext().getAttachments();
-            invocation.setRpcContext(new HashMap<>(attachments.size()));
-            invocation.getRpcContext().putAll(attachments);
+            Object rpcContext = MethodUtils.invokeStaticMethod(RpcContext.class, "getContext");
+            Object attachmentMap = MethodUtils.invokeMethod(rpcContext, "getAttachments");
+            if(Objects.nonNull(attachmentMap)) {
+                Map<String, String> attachments = (Map<String, String>) attachmentMap;
+                invocation.setRpcContext(new HashMap<>(attachments.size()));
+                invocation.getRpcContext().putAll(attachments);
+            }
             Span span = new Span(Tracer.getTraceId(), invocation.getUk());
-            RpcContext.getContext().setAttachment(Span.SPAN, JSON.toJSONString(span));
+            MethodUtils.invokeMethod(rpcContext, "setAttachment",Span.SPAN, JSON.toJSONString(span));
         } catch (Exception e) {
             log.error("DubboConsumerEventListener transportSpan error, eventId={}",event.invokeId,e );
         }finally {
