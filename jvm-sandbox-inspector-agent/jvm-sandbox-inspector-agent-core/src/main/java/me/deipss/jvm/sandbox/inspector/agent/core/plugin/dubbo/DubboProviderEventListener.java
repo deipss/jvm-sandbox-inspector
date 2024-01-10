@@ -25,35 +25,34 @@ public class DubboProviderEventListener extends BaseEventListener {
 
     @Override
     public Span extractSpan(BeforeEvent event) {
+        ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(event.javaClassLoader);
         try {
-            Object o = event.argumentArray[1];
-            if (o.getClass().getCanonicalName().endsWith("Invocation")) {
-                Object spanObj = MethodUtils.invokeMethod(o, "getAttachment", Span.SPAN);
-                if (Objects.isNull(spanObj)) {
-                    log.error("DubboProviderEventListener extractSpan span is null");
-                    return null;
-                }
-                String span = spanObj.toString();
-                return JSON.parseObject(span, Span.class);
-            } else {
-                log.error("DubboProviderEventListener extractSpan error, argumentArray1 not Invocation but ={} ", o.getClass().getCanonicalName());
+            Object spanObj = RpcContext.getContext().get(Span.SPAN);
+            if (Objects.isNull(spanObj)) {
+                log.error("DubboProviderEventListener extractSpan span is null");
+                return null;
             }
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            log.error("dubbo consumer assembleRequest error", e);
+            String span = spanObj.toString();
+            return JSON.parseObject(span, Span.class);
+        } finally {
+            Thread.currentThread().setContextClassLoader(sandboxClassLoader);
         }
-        return null;
     }
 
     @Override
     public void assembleRequest(BeforeEvent event, Invocation invocation) {
         // invoke(Invoker<?> invoker, Invocation invocation)
         try {
-            invocation.setRequest((Object[]) MethodUtils.invokeMethod(event.argumentArray[1], "getArguments"));
+            Object args = event.argumentArray[1];
+            invocation.setRequest((Object[]) MethodUtils.invokeMethod(args, "getArguments"));
             ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(event.javaClassLoader);
             Map<String, String> attachments = RpcContext.getContext().getAttachments();
             invocation.setRpcContext(new HashMap<>(attachments.size()));
             invocation.getRpcContext().putAll(attachments);
+            invocation.setMethodName(MethodUtils.invokeMethod(args, "getMethodName").toString());
+            invocation.setClassName(MethodUtils.invokeMethod(args, "getTargetServiceUniqueName").toString());
             Thread.currentThread().setContextClassLoader(sandboxClassLoader);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             log.error("dubbo consumer assembleRequest error", e);
@@ -66,7 +65,7 @@ public class DubboProviderEventListener extends BaseEventListener {
         try {
             invocation.setResponse(MethodUtils.invokeMethod(event.object, "getValue"));
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            log.error("dubbo provider assembleResponse error",e);
+            log.error("dubbo provider assembleResponse error", e);
         }
     }
 }

@@ -6,21 +6,35 @@ import lombok.NoArgsConstructor;
 import me.deipss.jvm.sandbox.inspector.agent.api.enums.MockType;
 import me.deipss.jvm.sandbox.inspector.agent.api.enums.Operate;
 
+import java.io.Serializable;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MockManageRequest {
+public class MockManageRequest implements Serializable {
+    private static final long serialVersionUID = -1L;
 
-    private MockType mockType;
     private Operate operate;
 
-    private String mockResponseJson;
+    private List<Inner> mockInnerList;
 
-    private Integer mockId;
-    private String mockClass;
-    private String mockMethod;
-    private boolean includeSubClass;
-    private String [] parameterTypes;
-    private String exceptionClassCanonicalName;
-    private String returnClassCanonicalName;
+
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public static class Inner implements Serializable {
+        private static final long serialVersionUID = -1L;
+
+        private MockType mockType;
+        private String mockResponseJson;
+        private Integer mockId;
+        private String mockClass;
+        private String mockMethod;
+        private boolean includeSubClass;
+        private String [] parameterTypes;
+        private String exceptionClassCanonicalName;
+        private String returnClassCanonicalName;
+    }
 }

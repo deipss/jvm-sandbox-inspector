@@ -27,8 +27,8 @@ public class DubboConsumerEventListener extends BaseEventListener {
 
     @Override
     public void transportSpan(BeforeEvent event) {
+        ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(event.javaClassLoader);
             log.info("DubboConsumerEventListener transportSpan, event classloader={},thread classloader={}",event.javaClassLoader.getClass().getCanonicalName(),sandboxClassLoader.getClass().getCanonicalName());
             Invocation invocation = InvocationCache.get(event.invokeId);
@@ -37,9 +37,10 @@ public class DubboConsumerEventListener extends BaseEventListener {
             invocation.getRpcContext().putAll(attachments);
             Span span = new Span(Tracer.getTraceId(), invocation.getUk());
             RpcContext.getContext().setAttachment(Span.SPAN, JSON.toJSONString(span));
-            Thread.currentThread().setContextClassLoader(sandboxClassLoader);
         } catch (Exception e) {
             log.error("DubboConsumerEventListener transportSpan error, eventId={}",event.invokeId,e );
+        }finally {
+            Thread.currentThread().setContextClassLoader(sandboxClassLoader);
         }
     }
 
@@ -47,7 +48,10 @@ public class DubboConsumerEventListener extends BaseEventListener {
     public void assembleRequest(BeforeEvent event, Invocation invocation) {
         // invoke(Invoker<?> invoker, Invocation invocation)
         try {
-            invocation.setRequest((Object[]) MethodUtils.invokeMethod(event.argumentArray[1], "getArguments"));
+            Object args = event.argumentArray[1];
+            invocation.setRequest((Object[]) MethodUtils.invokeMethod(args, "getArguments"));
+            invocation.setMethodName(MethodUtils.invokeMethod(args, "getMethodName").toString());
+            invocation.setClassName(MethodUtils.invokeMethod(args, "getTargetServiceUniqueName").toString());
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             log.error("dubbo consumer assembleRequest error",e);
         }

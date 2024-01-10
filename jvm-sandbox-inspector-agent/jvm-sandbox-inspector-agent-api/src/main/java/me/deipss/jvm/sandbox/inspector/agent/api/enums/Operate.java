@@ -8,7 +8,6 @@ import lombok.Getter;
 public enum Operate{
 
     STOP("停用"),
-    ADD("添加"),
     ADD_ALL("添加所有"),
     VIEW("展示所有"),
     ;

@@ -13,9 +13,9 @@ import static com.alibaba.jvm.sandbox.api.ProcessController.throwsImmediately;
 @Slf4j
 public class MockEventListener implements EventListener {
 
-    private MockManageRequest mockManageRequest;
+    private MockManageRequest.Inner mockManageRequest;
 
-    public MockEventListener(MockManageRequest mockManageRequest) {
+    public MockEventListener(MockManageRequest.Inner mockManageRequest) {
         this.mockManageRequest = mockManageRequest;
     }
 

@@ -11,9 +11,6 @@ import me.deipss.jvm.sandbox.inspector.agent.api.service.InvocationSendService;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BaseEventListener;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.http.copier.HttpServletResponseCopier;
 import me.deipss.jvm.sandbox.inspector.agent.core.trace.InvocationCache;
-import me.deipss.jvm.sandbox.inspector.agent.core.trace.Tracer;
-import org.apache.commons.io.CopyUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,8 +57,6 @@ public class HttpEventListener extends BaseEventListener {
     public void assembleRequest(BeforeEvent event, Invocation invocation) {
         // void service(HttpServletRequest req, HttpServletResponse resp)
         HttpInvocation httpInvocation =  (HttpInvocation) invocation;
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(event.javaClassLoader);
         try {
             if (!(event.argumentArray[0] instanceof HttpServletRequest)) {
                 return;
@@ -79,8 +74,6 @@ public class HttpEventListener extends BaseEventListener {
             setupBody(httpInvocation, req);
         } catch (Exception e) {
             log.error("http assembleRequest error", e);
-        } finally {
-            Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
     }
 

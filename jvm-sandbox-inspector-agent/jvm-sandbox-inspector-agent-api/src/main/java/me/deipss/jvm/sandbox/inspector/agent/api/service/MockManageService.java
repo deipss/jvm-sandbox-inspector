@@ -12,9 +12,7 @@ public interface MockManageService {
 
     int stop(int mockId);
 
-    int add(MockManageRequest request);
-
-    int addAll(List<MockManageRequest> request);
+    int addAll(List<MockManageRequest.Inner> request);
 
     MockManageResponse view();
 

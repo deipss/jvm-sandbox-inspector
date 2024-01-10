@@ -51,13 +51,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-rpc-api</artifactId>
-            <version>2.7.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-config-api</artifactId>
-            <version>2.7.3</version>
+            <artifactId>dubbo</artifactId>
+            <version>2.7.4.1</version>
         </dependency>
         <!--test-->
         <dependency>

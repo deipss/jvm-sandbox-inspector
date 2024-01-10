@@ -12,6 +12,7 @@ import com.alibaba.jvm.sandbox.api.resource.ModuleManager;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.Constant;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageRequest;
+import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageResponse;
 import me.deipss.jvm.sandbox.inspector.agent.api.service.HeartBeatService;
 import me.deipss.jvm.sandbox.inspector.agent.api.service.InvocationSendService;
 import me.deipss.jvm.sandbox.inspector.agent.api.service.MockManageService;
@@ -30,7 +31,10 @@ import org.kohsuke.MetaInfServices;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.stream.Collectors;
 
 @MetaInfServices(Module.class)
 @Information(id = Constant.moduleId, author = "deipss666@gmail.com", version = Constant.version)
@@ -103,21 +107,50 @@ public class InspectorModule implements Module, ModuleLifecycle {
     }
 
     @Command("manageMock")
-    public void manageMock(HttpServletRequest request, HttpServletResponse response){
+    public void manageMock(HttpServletRequest request, HttpServletResponse response) {
         log.info(request.getPathInfo());
-        MockManageRequest mock = JSON.parseObject(request.getParameter("mock"), MockManageRequest.class);
-        List<MockManageRequest> mockList = JSON.parseArray(request.getParameter("mockList"), MockManageRequest.class);
+        String body = null;
+        try (BufferedReader reader = request.getReader()) {
+            body = reader.lines().collect(Collectors.joining());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        MockManageRequest mock = JSON.parseObject(body, MockManageRequest.class);
         switch (mock.getOperate()) {
-            case ADD:mockManageService.add(mock);
+            case VIEW:
+                MockManageResponse view = mockManageService.view();
+                responseResult(response, view);
                 break;
-            case VIEW:mockManageService.view();
+            case STOP:
+                int rst = 0;
+                for (MockManageRequest.Inner inner : mock.getMockInnerList()) {
+                    rst += mockManageService.stop(inner.getMockId());
+                }
+                responseResult(response, rst);
                 break;
-            case STOP:mockManageService.stop(mock.getMockId());
-                break;
-            case ADD_ALL:mockManageService.addAll(mockList);
+            case ADD_ALL:
+                int i = mockManageService.addAll(mock.getMockInnerList());
+                responseResult(response, i);
                 break;
         }
     }
 
-
+    private void responseResult(HttpServletResponse response, Object result) {
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Max-Age", "3600");
+//        response.setHeader("Content-type", "application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json;charset=UTF-8");
+//        ServletOutputStream out = null;
+        try (PrintWriter writer = response.getWriter()) {
+            writer.write(JSON.toJSONString(result));
+            writer.flush();
+        } catch (IOException ex) {
+            log.error(ex.getMessage());
+        }
+    }
 }

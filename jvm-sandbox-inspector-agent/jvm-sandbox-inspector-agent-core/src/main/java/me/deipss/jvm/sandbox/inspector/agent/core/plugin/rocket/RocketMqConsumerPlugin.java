@@ -9,7 +9,7 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugin.BasePlugin;
 
 public class RocketMqConsumerPlugin extends BasePlugin {
     public RocketMqConsumerPlugin(InvocationSendService invocationSendService) {
-        super(Constant.ROCKET_MQ_CONSUMER,false,invocationSendService);
+        super(Constant.ROCKET_MQ_CONSUMER,true,invocationSendService);
     }
 
 

@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MockManageServiceImpl implements MockManageService {
 
-    private ConcurrentHashMap<Integer,MockManageRequest> mockMap;
+    private ConcurrentHashMap<Integer,MockManageRequest.Inner> mockMap;
 
     private ModuleEventWatcher moduleEventWatcher;
 
@@ -28,8 +28,7 @@ public class MockManageServiceImpl implements MockManageService {
         return 1;
     }
 
-    @Override
-    public int add(MockManageRequest request) {
+    public int add(MockManageRequest.Inner request) {
 
         EventWatchBuilder.IBuildingForClass iBuildingForClass = new EventWatchBuilder(moduleEventWatcher)
                 .onClass(request.getMockClass()).includeBootstrap();
@@ -51,9 +50,9 @@ public class MockManageServiceImpl implements MockManageService {
     }
 
     @Override
-    public int addAll(List<MockManageRequest> list) {
+    public int addAll(List<MockManageRequest.Inner> list) {
         int result = 0;
-        for (MockManageRequest mockManageRequest : list) {
+        for (MockManageRequest.Inner mockManageRequest : list) {
             add(mockManageRequest);
             ++result;
         }
