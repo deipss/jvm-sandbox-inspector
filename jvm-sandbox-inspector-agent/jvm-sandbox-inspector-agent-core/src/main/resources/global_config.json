@@ -3,6 +3,6 @@
   "heartUrl": "http://192.168.0.2:8088/api/inspector/heartBeat",
   "dataSendUrl": "http://192.168.0.2:8088/api/inspector/dataSync",
   "enablePlugins": [
-    "demoData"
+    "http"
   ]
 }
