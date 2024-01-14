@@ -4,5 +4,9 @@
   "dataSendUrl": "http://192.168.0.2:8088/api/inspector/dataSync",
   "enablePlugins": [
     "http"
-  ]
+  ],
+  "bizLoadClassRegexes": [
+    "^org.apache.dubbo..*","^javax.servlet..*"
+  ],
+  "pluginsUrl": "file://opt/sandbox/sandbox-module/inspector/inspector-plugins-jar-with-dependencies.jar"
 }

@@ -56,7 +56,6 @@ public class InspectorModule implements Module, ModuleLifecycle {
     private InvocationSendService invocationSend;
 
 
-
     @Override
     public void onLoad() throws Throwable {
 
@@ -80,17 +79,21 @@ public class InspectorModule implements Module, ModuleLifecycle {
     public void loadCompleted() {
 
         invocationSend = new InvocationSendServiceImpl();
-
+        URL url = null;
         try {
-            new URL("file:" + "");
+            url = new URL(ConfigUtil.getPluginsUrl());
         } catch (MalformedURLException e) {
+            log.error("URL new error,url={}", ConfigUtil.getPluginsUrl(), e);
             throw new RuntimeException(e);
         }
-        PluginClassLoader pluginClassLoader = new PluginClassLoader({""}, this.getClass().getClassLoader(), null, loadedClassDataSource);
+        PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, this.getClass().getClassLoader(), ConfigUtil.getBizLoadClassRegexes(), loadedClassDataSource);
         List<InspectorPlugin> inspectorPlugins = loadInspectorPluginBySPI(pluginClassLoader);
         for (InspectorPlugin inspectorPlugin : inspectorPlugins) {
             if (inspectorPlugin.enable(ConfigUtil.getEnablePlugins())) {
                 inspectorPlugin.watch(moduleEventWatcher, invocationSend);
+                log.info("enable plugin ={}", inspectorPlugin.identify());
+            } else {
+                log.info("not enable plugin ={}", inspectorPlugin.identify());
             }
         }
 
@@ -160,7 +163,7 @@ public class InspectorModule implements Module, ModuleLifecycle {
             try {
                 target.add(spiIterator.next());
             } catch (Throwable e) {
-                log.error("Error load spi InspectorPlugin={} ",classLoader.getClass().getCanonicalName(), e);
+                log.error("Error load spi InspectorPlugin={} ", classLoader.getClass().getCanonicalName(), e);
             }
         }
         return target;

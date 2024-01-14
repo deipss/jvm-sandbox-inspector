@@ -26,10 +26,15 @@ public class GlobalConfig implements Serializable {
      */
     private String dataSendUrl;
 
+    private String pluginsUrl;
+
     /**
      * 启用的插件
      */
     private List<String> enablePlugins;
+
+
+    private List<String> bizLoadClassRegexes;
 
 
 }

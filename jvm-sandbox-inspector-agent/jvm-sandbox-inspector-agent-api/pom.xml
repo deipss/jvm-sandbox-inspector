@@ -10,6 +10,8 @@
     </parent>
 
     <artifactId>jvm-sandbox-inspector-agent-api</artifactId>
+    <version>${revision}</version>
+
     <dependencies>
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>

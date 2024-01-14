@@ -87,7 +87,7 @@
             </dependency>
             <dependency>
                 <groupId>me.deipss</groupId>
-                <artifactId>jvm-sandbox-inspector-agent-plugin</artifactId>
+                <artifactId>jvm-sandbox-inspector-agent-plugins</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!--spring-->

@@ -32,7 +32,15 @@ public class ConfigUtil {
         return config.getDataSendUrl();
     }
 
+    public static String getPluginsUrl(){
+        return config.getPluginsUrl();
+    }
+
     public static List<String> getEnablePlugins() {
         return config.getEnablePlugins();
+    }
+
+    public static List<String> getBizLoadClassRegexes() {
+        return config.getBizLoadClassRegexes();
     }
 }

@@ -2,7 +2,6 @@ package me.deipss.jvm.sandbox.inspector.agent.core.classloader;
 
 import com.alibaba.jvm.sandbox.api.resource.LoadedClassDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.common.utils.CollectionUtils;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -18,7 +17,7 @@ public class PluginClassLoader extends URLClassLoader {
 
     public PluginClassLoader(URL[] urls, ClassLoader parent, List<String> classRegexList, LoadedClassDataSource loadedClassDataSource) {
         super(urls, parent);
-        if (CollectionUtils.isNotEmpty(classRegexList)) {
+        if (null!=classRegexList && !classRegexList.isEmpty()) {
             this.classRegexList.addAll(classRegexList);
         }
         this.loadedClassDataSource = loadedClassDataSource;
@@ -28,25 +27,27 @@ public class PluginClassLoader extends URLClassLoader {
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
 
         // 使用业务类加载器
-        if (CollectionUtils.isNotEmpty(classRegexList)) {
+        if (null!=classRegexList && !classRegexList.isEmpty()) {
             for (final String classRegex : classRegexList) {
                 if (!name.matches(classRegex)) {
                     continue;
                 }
+                int cnt = 10;
                 try {
-                    int cnt = 10;
                     Iterator<Class<?>> iterator = loadedClassDataSource.iteratorForLoadedClasses();
                     do {
                         while (iterator.hasNext()) {
                             final Class<?> next = iterator.next();
                             if (name.equals(next.getName()) && !isSandboxLoadedClass(next)) {
-                                return next.getClassLoader().loadClass(name);
+                                Class<?> aClass = next.getClassLoader().loadClass(name);
+                                log.info("{} load {} done",next.getClassLoader().getClass().getCanonicalName(),name);
+                                return aClass;
                             }
                         }
                         Thread.sleep(100);
                     } while (--cnt > 0);
                 } catch (Exception e) {
-                    log.error(" load {} error", name, e);
+                    log.error(" load {} error,cnt={}", name, cnt, e);
                 }
             }
         }

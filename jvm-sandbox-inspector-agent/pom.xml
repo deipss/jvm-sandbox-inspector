@@ -14,7 +14,7 @@
     <modules>
         <module>jvm-sandbox-inspector-agent-api</module>
         <module>jvm-sandbox-inspector-agent-core</module>
-        <module>jvm-sandbox-inspector-agent-plugin</module>
+        <module>jvm-sandbox-inspector-agent-plugins</module>
     </modules>
 
 
