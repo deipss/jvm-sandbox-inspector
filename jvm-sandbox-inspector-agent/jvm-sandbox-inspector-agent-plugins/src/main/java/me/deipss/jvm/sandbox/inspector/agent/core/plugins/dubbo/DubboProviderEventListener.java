@@ -43,15 +43,14 @@ public class DubboProviderEventListener extends BaseEventListener {
         // invoke(Invoker<?> invoker, Invocation invocation)
         try {
             Object args = event.argumentArray[1];
+            Object invoker = event.argumentArray[0];
             invocation.setRequest((Object[]) MethodUtils.invokeMethod(args, "getArguments"));
-            ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(event.javaClassLoader);
             Map<String, String> attachments = RpcContext.getContext().getAttachments();
             invocation.setRpcContext(new HashMap<>(attachments.size()));
             invocation.getRpcContext().putAll(attachments);
             invocation.setMethodName(MethodUtils.invokeMethod(args, "getMethodName").toString());
-            invocation.setClassName(MethodUtils.invokeMethod(args, "getTargetServiceUniqueName").toString());
-            Thread.currentThread().setContextClassLoader(sandboxClassLoader);
+            String interfaceName = ((Class) MethodUtils.invokeMethod(invoker, "getInterface")).getCanonicalName();
+            invocation.setClassName(interfaceName);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             log.error("dubbo consumer assembleRequest error", e);
         }

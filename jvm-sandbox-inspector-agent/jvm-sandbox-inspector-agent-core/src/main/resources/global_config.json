@@ -8,5 +8,5 @@
   "bizLoadClassRegexes": [
     "^org.apache.dubbo..*","^javax.servlet..*"
   ],
-  "pluginsPath": "opt/sandbox/sandbox-module/inspector/inspector-plugins.jar"
+  "pluginsPath": "/opt/sandbox/sandbox-module/inspector/inspector-plugins.jar"
 }

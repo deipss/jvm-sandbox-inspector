@@ -90,19 +90,20 @@ public class InspectorModule implements Module, ModuleLifecycle {
         try {
             url = new File(ConfigUtil.getPluginsFilePath()).toURI().toURL();
             log.info("plugin file url ={}", url);
-        } catch (MalformedURLException e) {
+
+            PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, this.getClass().getClassLoader(), ConfigUtil.getBizLoadClassRegexes(), loadedClassDataSource);
+            List<InspectorPlugin> inspectorPlugins = loadInspectorPluginBySPI(pluginClassLoader);
+            for (InspectorPlugin inspectorPlugin : inspectorPlugins) {
+                if (inspectorPlugin.enable(ConfigUtil.getEnablePlugins())) {
+                    inspectorPlugin.watch(moduleEventWatcher, invocationSend);
+                    log.info("enable plugin ={}", inspectorPlugin.identify());
+                } else {
+                    log.info("not enable plugin ={}", inspectorPlugin.identify());
+                }
+            }
+        } catch (Exception e) {
             log.error("URL new error,url={}", ConfigUtil.getPluginsFilePath(), e);
             throw new RuntimeException(e);
-        }
-        PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, this.getClass().getClassLoader(), ConfigUtil.getBizLoadClassRegexes(), loadedClassDataSource);
-        List<InspectorPlugin> inspectorPlugins = loadInspectorPluginBySPI(pluginClassLoader);
-        for (InspectorPlugin inspectorPlugin : inspectorPlugins) {
-            if (inspectorPlugin.enable(ConfigUtil.getEnablePlugins())) {
-                inspectorPlugin.watch(moduleEventWatcher, invocationSend);
-                log.info("enable plugin ={}", inspectorPlugin.identify());
-            } else {
-                log.info("not enable plugin ={}", inspectorPlugin.identify());
-            }
         }
 
 

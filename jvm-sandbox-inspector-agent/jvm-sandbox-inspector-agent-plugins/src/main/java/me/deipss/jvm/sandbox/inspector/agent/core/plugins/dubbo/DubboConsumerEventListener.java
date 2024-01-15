@@ -31,13 +31,13 @@ public class DubboConsumerEventListener extends BaseEventListener {
         try {
             log.info("DubboConsumerEventListener transportSpan, event classloader={},thread classloader={}",event.javaClassLoader.getClass().getCanonicalName(),Thread.currentThread().getClass().getCanonicalName());
             Invocation invocation = InvocationCache.get(event.invokeId);
+            Span span = new Span(Tracer.getTraceId(), invocation.getUk());
+            RpcContext.getContext().setAttachment(Span.SPAN, JSON.toJSONString(span));
             Map<String, String> attachmentMap = RpcContext.getContext().getAttachments();
             if(Objects.nonNull(attachmentMap)) {
                 invocation.setRpcContext(new HashMap<>(attachmentMap.size()));
                 invocation.getRpcContext().putAll(attachmentMap);
             }
-            Span span = new Span(Tracer.getTraceId(), invocation.getUk());
-            RpcContext.getContext().setAttachment(Span.SPAN, JSON.toJSONString(span));
         } catch (Exception e) {
             log.error("DubboConsumerEventListener transportSpan error, eventId={}",event.invokeId,e );
         }
@@ -49,9 +49,11 @@ public class DubboConsumerEventListener extends BaseEventListener {
         // invoke(Invoker<?> invoker, Invocation invocation)
         try {
             Object args = event.argumentArray[1];
+            Object invoker = event.argumentArray[0];
             invocation.setRequest((Object[]) MethodUtils.invokeMethod(args, "getArguments"));
             invocation.setMethodName(MethodUtils.invokeMethod(args, "getMethodName").toString());
-            invocation.setClassName(MethodUtils.invokeMethod(args, "getTargetServiceUniqueName").toString());
+            String  interfaceName = ((Class)MethodUtils.invokeMethod(invoker, "getInterface")).getCanonicalName();
+            invocation.setClassName(interfaceName);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             log.error("dubbo consumer assembleRequest error",e);
         }
