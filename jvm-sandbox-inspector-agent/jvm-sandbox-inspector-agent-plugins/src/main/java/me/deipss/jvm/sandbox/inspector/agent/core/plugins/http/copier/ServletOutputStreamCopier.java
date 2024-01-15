@@ -7,8 +7,8 @@ import java.io.IOException;
 
 public class ServletOutputStreamCopier extends ServletOutputStream {
 
-    private ServletOutputStream outputStream;
-    private ByteArrayOutputStream copy;
+    private final ServletOutputStream outputStream;
+    private final ByteArrayOutputStream copy;
 
     public ServletOutputStreamCopier(ServletOutputStream outputStream) {
         this.outputStream = outputStream;

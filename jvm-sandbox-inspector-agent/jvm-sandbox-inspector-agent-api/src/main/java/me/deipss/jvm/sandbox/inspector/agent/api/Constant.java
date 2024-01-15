@@ -10,4 +10,11 @@ public class Constant {
     public static final String ROCKET_MQ_CONSUMER = "ROCKET_MQ_CONSUMER";
     public static final String JDBC = "JDBC";
     public static final String HTTP = "HTTP";
+
+    public static final String[] PLUGIN_CLASS_PATTERN = new String[]{
+            "^me.deipss.jvm.sandbox.inspector.agent.core.plugins.http.copier.*",
+            "^org.slf4j..*",
+            "^ch.qos.logback..*",
+            "^org.apache.commons..*"
+    };
 }

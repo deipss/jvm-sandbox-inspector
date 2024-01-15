@@ -2,6 +2,7 @@ package me.deipss.jvm.sandbox.inspector.agent.core.classloader;
 
 import com.alibaba.jvm.sandbox.api.resource.LoadedClassDataSource;
 import lombok.extern.slf4j.Slf4j;
+import me.deipss.jvm.sandbox.inspector.agent.api.Constant;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -17,7 +18,7 @@ public class PluginClassLoader extends URLClassLoader {
 
     public PluginClassLoader(URL[] urls, ClassLoader parent, List<String> classRegexList, LoadedClassDataSource loadedClassDataSource) {
         super(urls, parent);
-        if (null!=classRegexList && !classRegexList.isEmpty()) {
+        if (null != classRegexList && !classRegexList.isEmpty()) {
             this.classRegexList.addAll(classRegexList);
         }
         this.loadedClassDataSource = loadedClassDataSource;
@@ -25,9 +26,16 @@ public class PluginClassLoader extends URLClassLoader {
 
     @Override
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-
+        // plugin-api的类;slf4j;logback；使用模块加载
+        if (userParent(name)) {
+            try {
+                return super.loadClass(name, resolve);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
         // 使用业务类加载器
-        if (null!=classRegexList && !classRegexList.isEmpty()) {
+        if (null != classRegexList && !classRegexList.isEmpty()) {
             for (final String classRegex : classRegexList) {
                 if (!name.matches(classRegex)) {
                     continue;
@@ -40,7 +48,7 @@ public class PluginClassLoader extends URLClassLoader {
                             final Class<?> next = iterator.next();
                             if (name.equals(next.getName()) && !isSandboxLoadedClass(next)) {
                                 Class<?> aClass = next.getClassLoader().loadClass(name);
-                                log.info("{} load {} done",next.getClassLoader().getClass().getCanonicalName(),name);
+                                log.info("{} load {} done", next.getClassLoader().getClass().getCanonicalName(), name);
                                 return aClass;
                             }
                         }
@@ -84,5 +92,22 @@ public class PluginClassLoader extends URLClassLoader {
             return false;
         }
         return clazz.getClassLoader().getClass().getName().contains("sandbox");
+    }
+
+    /**
+     * 是否使用父类加载（理论上PluginClassLoader除了特殊路由表之外的都可以用moduleClassloader的类）
+     * <p>
+     * 但为了插件能够更自由的引包，也破坏了双亲委派机制
+     *
+     * @param name 类名
+     * @return 是否使用父类加载
+     */
+    private boolean userParent(String name) {
+        for (String pattern : Constant.PLUGIN_CLASS_PATTERN) {
+            if (name.matches(pattern)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -4,7 +4,7 @@
     <appender name="INSPECTOR-FILE-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${user.home}/logs/sandbox/inspector.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${user.home}/logs/sandbox/repeater.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <FileNamePattern>${user.home}/logs/sandbox/inspector.log.%d{yyyy-MM-dd}</FileNamePattern>
             <MaxHistory>30</MaxHistory>
         </rollingPolicy>
         <encoder>

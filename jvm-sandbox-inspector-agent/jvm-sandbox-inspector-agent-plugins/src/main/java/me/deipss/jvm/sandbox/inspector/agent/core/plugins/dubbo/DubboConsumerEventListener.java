@@ -28,25 +28,20 @@ public class DubboConsumerEventListener extends BaseEventListener {
 
     @Override
     public void transportSpan(BeforeEvent event) {
-        ClassLoader sandboxClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(event.javaClassLoader);
-            log.info("DubboConsumerEventListener transportSpan, event classloader={},thread classloader={}",event.javaClassLoader.getClass().getCanonicalName(),sandboxClassLoader.getClass().getCanonicalName());
+            log.info("DubboConsumerEventListener transportSpan, event classloader={},thread classloader={}",event.javaClassLoader.getClass().getCanonicalName(),Thread.currentThread().getClass().getCanonicalName());
             Invocation invocation = InvocationCache.get(event.invokeId);
-            Object rpcContext = MethodUtils.invokeStaticMethod(RpcContext.class, "getContext");
-            Object attachmentMap = MethodUtils.invokeMethod(rpcContext, "getAttachments");
+            Map<String, String> attachmentMap = RpcContext.getContext().getAttachments();
             if(Objects.nonNull(attachmentMap)) {
-                Map<String, String> attachments = (Map<String, String>) attachmentMap;
-                invocation.setRpcContext(new HashMap<>(attachments.size()));
-                invocation.getRpcContext().putAll(attachments);
+                invocation.setRpcContext(new HashMap<>(attachmentMap.size()));
+                invocation.getRpcContext().putAll(attachmentMap);
             }
             Span span = new Span(Tracer.getTraceId(), invocation.getUk());
-            MethodUtils.invokeMethod(rpcContext, "setAttachment",Span.SPAN, JSON.toJSONString(span));
+            RpcContext.getContext().setAttachment(Span.SPAN, JSON.toJSONString(span));
         } catch (Exception e) {
             log.error("DubboConsumerEventListener transportSpan error, eventId={}",event.invokeId,e );
-        }finally {
-            Thread.currentThread().setContextClassLoader(sandboxClassLoader);
         }
+
     }
 
     @Override
