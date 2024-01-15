@@ -13,11 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.alibaba.jvm.sandbox</groupId>
-            <artifactId>sandbox-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>me.deipss</groupId>
             <artifactId>jvm-sandbox-inspector-agent-api</artifactId>
             <scope>provided</scope>
@@ -25,16 +20,6 @@
         <dependency>
             <groupId>me.deipss</groupId>
             <artifactId>jvm-sandbox-inspector-agent-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -50,22 +35,7 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <phase>package</phase>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <finalName>inspector-plugins</finalName>
-                            <encoding>UTF-8</encoding>
-                        </configuration>
-                    </execution>
-                </executions>
+                <artifactId>maven-jar-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

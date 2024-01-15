@@ -24,12 +24,14 @@ import me.deipss.jvm.sandbox.inspector.agent.core.impl.InvocationSendServiceImpl
 import me.deipss.jvm.sandbox.inspector.agent.core.impl.MockManageServiceImpl;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.concurrent.TtlConcurrentPlugin;
 import me.deipss.jvm.sandbox.inspector.agent.core.util.ConfigUtil;
+import me.deipss.jvm.sandbox.inspector.agent.core.util.LogbackUtils;
 import org.kohsuke.MetaInfServices;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
@@ -58,6 +60,7 @@ public class InspectorModule implements Module, ModuleLifecycle {
 
     @Override
     public void onLoad() throws Throwable {
+        LogbackUtils.init();
 
     }
 
@@ -79,11 +82,12 @@ public class InspectorModule implements Module, ModuleLifecycle {
     public void loadCompleted() {
 
         invocationSend = new InvocationSendServiceImpl();
-        URL url = null;
+        URL url;
         try {
-            url = new URL(ConfigUtil.getPluginsUrl());
+            url = new File(ConfigUtil.getPluginsFilePath()).toURI().toURL();
+            log.info("plugin file url ={}",url );
         } catch (MalformedURLException e) {
-            log.error("URL new error,url={}", ConfigUtil.getPluginsUrl(), e);
+            log.error("URL new error,url={}", ConfigUtil.getPluginsFilePath(), e);
             throw new RuntimeException(e);
         }
         PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, this.getClass().getClassLoader(), ConfigUtil.getBizLoadClassRegexes(), loadedClassDataSource);

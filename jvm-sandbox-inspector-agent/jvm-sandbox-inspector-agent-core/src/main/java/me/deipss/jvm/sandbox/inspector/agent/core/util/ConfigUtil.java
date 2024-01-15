@@ -32,8 +32,8 @@ public class ConfigUtil {
         return config.getDataSendUrl();
     }
 
-    public static String getPluginsUrl(){
-        return config.getPluginsUrl();
+    public static String getPluginsFilePath(){
+        return config.getPluginsPath();
     }
 
     public static List<String> getEnablePlugins() {
