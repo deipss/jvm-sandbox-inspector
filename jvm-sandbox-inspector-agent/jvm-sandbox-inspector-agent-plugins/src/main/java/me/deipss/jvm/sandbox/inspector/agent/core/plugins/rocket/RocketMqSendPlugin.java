@@ -10,7 +10,6 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugins.BasePlugin;
 import org.kohsuke.MetaInfServices;
 
 @MetaInfServices(InspectorPlugin.class)
-
 public class RocketMqSendPlugin extends BasePlugin {
 
 

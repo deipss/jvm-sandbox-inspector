@@ -25,7 +25,7 @@ public class DubboProviderEventListener extends BaseEventListener {
     @Override
     public Span extractSpan(BeforeEvent event) {
         try {
-            Object spanObj = RpcContext.getContext().get(Span.SPAN);
+            Object spanObj = RpcContext.getContext().getAttachment(Span.SPAN);
             if (Objects.isNull(spanObj)) {
                 log.error("DubboProviderEventListener extractSpan span is null");
                 return null;

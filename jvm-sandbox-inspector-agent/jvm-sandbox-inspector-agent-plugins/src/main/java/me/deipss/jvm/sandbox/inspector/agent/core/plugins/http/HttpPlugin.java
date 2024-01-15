@@ -12,9 +12,7 @@ import org.kohsuke.MetaInfServices;
 
 @Slf4j
 @MetaInfServices(InspectorPlugin.class)
-
 public class HttpPlugin extends BasePlugin {
-
 
 
     @Override
@@ -33,7 +31,7 @@ public class HttpPlugin extends BasePlugin {
                 .onClass("javax.servlet.http.HttpServlet").includeBootstrap().includeSubClasses()
                 .onBehavior("service")
                 .withParameterTypes("javax.servlet.http.HttpServletRequest", "javax.servlet.http.HttpServletResponse")
-                .onWatch(new HttpEventListener(entrance(), identify(),invocationSendService), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
+                .onWatch(new HttpEventListener(entrance(), identify(), invocationSendService), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
 
         return 1;
     }

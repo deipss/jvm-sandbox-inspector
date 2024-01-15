@@ -61,21 +61,25 @@ public class InspectorModule implements Module, ModuleLifecycle {
     @Override
     public void onLoad() throws Throwable {
         LogbackUtils.init();
-
+        log.info("module={},logback initialize，mode={}", Constant.moduleId, configInfo.getMode());
     }
 
     @Override
     public void onUnload() throws Throwable {
+        log.info("module={},onUnload ", Constant.moduleId);
 
     }
 
     @Override
     public void onActive() throws Throwable {
+        log.info("module={},onActive ", Constant.moduleId);
 
     }
 
     @Override
     public void onFrozen() throws Throwable {
+        log.info("module={},onFrozen ", Constant.moduleId);
+
     }
 
     @Override
@@ -85,7 +89,7 @@ public class InspectorModule implements Module, ModuleLifecycle {
         URL url;
         try {
             url = new File(ConfigUtil.getPluginsFilePath()).toURI().toURL();
-            log.info("plugin file url ={}",url );
+            log.info("plugin file url ={}", url);
         } catch (MalformedURLException e) {
             log.error("URL new error,url={}", ConfigUtil.getPluginsFilePath(), e);
             throw new RuntimeException(e);
