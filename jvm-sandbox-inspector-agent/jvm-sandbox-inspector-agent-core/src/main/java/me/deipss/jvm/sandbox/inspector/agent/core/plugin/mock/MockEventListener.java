@@ -23,7 +23,7 @@ public class MockEventListener implements EventListener {
     public void onEvent(Event event) throws Throwable {
         if (event.type.equals(Event.Type.BEFORE)) {
             if (mockManageRequest.getMockType().equals(MockType.THROW_BEFORE_EXE)) {
-                Class<?> throwClass = Class.forName(mockManageRequest.getReturnClassCanonicalName());
+                Class<?> throwClass = Class.forName(mockManageRequest.getExceptionClassCanonicalName());
                 log.info("throwsImmediately class= {}",mockManageRequest.getExceptionClassCanonicalName() );
                 throwsImmediately((Throwable) throwClass.newInstance());
             }

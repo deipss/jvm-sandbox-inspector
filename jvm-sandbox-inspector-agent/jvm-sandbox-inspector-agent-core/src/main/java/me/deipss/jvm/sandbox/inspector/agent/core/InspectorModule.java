@@ -123,6 +123,7 @@ public class InspectorModule implements Module, ModuleLifecycle {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        log.info("manageMock receipt body={}",body );
         MockManageRequest mock = JSON.parseObject(body, MockManageRequest.class);
         switch (mock.getOperate()) {
             case VIEW:
@@ -155,6 +156,7 @@ public class InspectorModule implements Module, ModuleLifecycle {
         response.setContentType("application/json;charset=UTF-8");
 //        ServletOutputStream out = null;
         try (PrintWriter writer = response.getWriter()) {
+            log.info("write to web client ,result ={}",result );
             writer.write(JSON.toJSONString(result));
             writer.flush();
         } catch (IOException ex) {
