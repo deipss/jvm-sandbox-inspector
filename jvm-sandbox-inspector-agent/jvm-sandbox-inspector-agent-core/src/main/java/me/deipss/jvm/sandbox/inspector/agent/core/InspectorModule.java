@@ -34,7 +34,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -91,7 +90,7 @@ public class InspectorModule implements Module, ModuleLifecycle {
             url = new File(ConfigUtil.getPluginsFilePath()).toURI().toURL();
             log.info("plugin file url ={}", url);
 
-            PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, this.getClass().getClassLoader(), ConfigUtil.getBizLoadClassRegexes(), loadedClassDataSource);
+            PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, this.getClass().getClassLoader(), loadedClassDataSource);
             List<InspectorPlugin> inspectorPlugins = loadInspectorPluginBySPI(pluginClassLoader);
             for (InspectorPlugin inspectorPlugin : inspectorPlugins) {
                 if (inspectorPlugin.enable(ConfigUtil.getEnablePlugins())) {

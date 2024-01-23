@@ -40,7 +40,4 @@ public class ConfigUtil {
         return config.getEnablePlugins();
     }
 
-    public static List<String> getBizLoadClassRegexes() {
-        return config.getBizLoadClassRegexes();
-    }
 }

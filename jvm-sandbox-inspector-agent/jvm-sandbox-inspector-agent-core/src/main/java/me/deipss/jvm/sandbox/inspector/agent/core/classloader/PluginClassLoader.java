@@ -9,54 +9,69 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class PluginClassLoader extends URLClassLoader {
 
-    private final List<String> classRegexList = new ArrayList<>(8);
     private final LoadedClassDataSource loadedClassDataSource;
 
-    public PluginClassLoader(URL[] urls, ClassLoader parent, List<String> classRegexList, LoadedClassDataSource loadedClassDataSource) {
+    public PluginClassLoader(URL[] urls, ClassLoader parent, LoadedClassDataSource loadedClassDataSource) {
         super(urls, parent);
-        if (null != classRegexList && !classRegexList.isEmpty()) {
-            this.classRegexList.addAll(classRegexList);
-        }
         this.loadedClassDataSource = loadedClassDataSource;
     }
 
     @Override
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        // plugin-api的类;slf4j;logback；使用模块加载
+        // slf4j;logback；使用模块加载
         if (userParent(name)) {
             try {
+                log.info(" inspector load {} by parent", name);
                 return super.loadClass(name, resolve);
             } catch (Exception e) {
-                // ignore
+                log.error(" inspector super class ={} load error,", super.getClass().getCanonicalName(), e);
             }
         }
         // 使用业务类加载器
-        if (null != classRegexList && !classRegexList.isEmpty()) {
-            for (final String classRegex : classRegexList) {
-                if (!name.matches(classRegex)) {
-                    continue;
-                }
-                int cnt = 10;
-                try {
-                    Iterator<Class<?>> iterator = loadedClassDataSource.iteratorForLoadedClasses();
-                    do {
-                        while (iterator.hasNext()) {
-                            final Class<?> next = iterator.next();
-                            if (name.equals(next.getName()) && !isSandboxLoadedClass(next)) {
-                                Class<?> aClass = next.getClassLoader().loadClass(name);
-                                log.info("{} load {} done", next.getClassLoader().getClass().getCanonicalName(), name);
-                                return aClass;
-                            }
+        for (final String classRegex : Constant.PLUGIN_CLASS_PATTERN_FOR_BIZ) {
+            if (!name.matches(classRegex)) {
+                continue;
+            }
+            log.info(" inspector load {} by biz", name);
+            ArrayList<ClassLoader> classLoaders = new ArrayList<>(2);
+            int cnt = 10;
+            try {
+                Iterator<Class<?>> iterator = loadedClassDataSource.iteratorForLoadedClasses();
+                do {
+                    while (iterator.hasNext()) {
+                        final Class<?> next = iterator.next();
+                        if (name.equals(next.getName()) && !isSandboxLoadedClass(next)) {
+                            classLoaders.add(next.getClassLoader());
                         }
-                        Thread.sleep(100);
-                    } while (--cnt > 0);
-                } catch (Exception e) {
-                    log.error(" load {} error,cnt={}", name, cnt, e);
+                    }
+                    Thread.sleep(100);
+                } while (--cnt > 0);
+                if (classLoaders.size()==1) {
+                    Class<?> aClass = classLoaders.get(0).loadClass(name);
+                    log.info(" inspector 1 class loader, {} load {} done", classLoaders.get(0).getClass().getCanonicalName(), name);
+                    return aClass;
                 }
+                if (classLoaders.size()>1) {
+                    log.info(" inspector {} class loader, {} load {} ",classLoaders.size(), classLoaders.stream().map(i->i.getClass().getCanonicalName()).toArray(), name);
+                    if("javax.servlet.ServletOutputStream".equals(name)){
+                        Optional<ClassLoader> sandbox = classLoaders.stream().filter(i -> i.getClass().getCanonicalName().contains("sandbox")).findAny();
+                        if(sandbox.isPresent()){
+                            return sandbox.get().loadClass(name);
+                        }
+                    }else{
+                        Optional<ClassLoader> biz = classLoaders.stream().filter(i -> !i.getClass().getCanonicalName().contains("sandbox")).findAny();
+                        if(biz.isPresent()){
+                            return biz.get().loadClass(name);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.error(" inspector  load {} error,cnt={}", name, cnt, e);
             }
         }
 
@@ -74,6 +89,7 @@ public class PluginClassLoader extends URLClassLoader {
             }
             return aClass;
         } catch (Exception e) {
+            log.info("finally use super class loader ,name = {},super loader={},error={}",name ,super.getClass().getCanonicalName(),e.getMessage());
             return super.loadClass(name, resolve);
         }
     }
@@ -96,14 +112,11 @@ public class PluginClassLoader extends URLClassLoader {
 
     /**
      * 是否使用父类加载（理论上PluginClassLoader除了特殊路由表之外的都可以用moduleClassloader的类）
-     * <p>
-     * 但为了插件能够更自由的引包，也破坏了双亲委派机制
-     *
      * @param name 类名
      * @return 是否使用父类加载
      */
     private boolean userParent(String name) {
-        for (String pattern : Constant.PLUGIN_CLASS_PATTERN) {
+        for (String pattern : Constant.PLUGIN_CLASS_PATTERN_FOR_PARENT) {
             if (name.matches(pattern)) {
                 return true;
             }
