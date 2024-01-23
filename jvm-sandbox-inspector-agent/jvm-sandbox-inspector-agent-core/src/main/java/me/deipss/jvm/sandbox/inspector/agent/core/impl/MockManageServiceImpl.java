@@ -3,6 +3,7 @@ package me.deipss.jvm.sandbox.inspector.agent.core.impl;
 import com.alibaba.jvm.sandbox.api.event.Event;
 import com.alibaba.jvm.sandbox.api.listener.ext.EventWatchBuilder;
 import com.alibaba.jvm.sandbox.api.listener.ext.EventWatcher;
+import com.alibaba.jvm.sandbox.api.resource.LoadedClassDataSource;
 import com.alibaba.jvm.sandbox.api.resource.ModuleEventWatcher;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageRequest;
@@ -20,8 +21,11 @@ public class MockManageServiceImpl implements MockManageService {
 
     private ModuleEventWatcher moduleEventWatcher;
 
-    public MockManageServiceImpl(ModuleEventWatcher moduleEventWatcher) {
+    private LoadedClassDataSource loadedClassDataSource;
+
+    public MockManageServiceImpl(ModuleEventWatcher moduleEventWatcher,LoadedClassDataSource loadedClassDataSource) {
         this.moduleEventWatcher = moduleEventWatcher;
+        this.loadedClassDataSource = loadedClassDataSource;
         mockMap = new ConcurrentHashMap<>(8);
     }
 
@@ -50,7 +54,7 @@ public class MockManageServiceImpl implements MockManageService {
         if (null != request.getParameterTypes()) {
             iBuildingForBehavior.withParameterTypes(request.getParameterTypes());
         }
-        EventWatcher eventWatcher = iBuildingForBehavior.onWatch(new MockEventListener(request), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
+        EventWatcher eventWatcher = iBuildingForBehavior.onWatch(new MockEventListener(request,loadedClassDataSource), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
         mockMap.put(eventWatcher.getWatchId(), request);
         log.info("add mock ,watchId={}", eventWatcher.getWatchId());
         return 1;

@@ -109,7 +109,7 @@ public class InspectorModule implements Module, ModuleLifecycle {
         TtlConcurrentPlugin ttlConcurrentPlugin = new TtlConcurrentPlugin();
         ttlConcurrentPlugin.watch(moduleEventWatcher);
 
-        mockManageService = new MockManageServiceImpl(moduleEventWatcher);
+        mockManageService = new MockManageServiceImpl(moduleEventWatcher,loadedClassDataSource);
         heartBeatService = new HeartBeatServiceImpl();
         heartBeatService.start();
     }
