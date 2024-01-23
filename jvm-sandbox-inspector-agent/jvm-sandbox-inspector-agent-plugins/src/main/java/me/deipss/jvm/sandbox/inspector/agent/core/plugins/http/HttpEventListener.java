@@ -120,7 +120,7 @@ public class HttpEventListener extends BaseEventListener {
 
     private void setupBody(Invocation invocation, HttpServletRequest request) {
 
-        if (!request.getContentType().contains("application/json")) {
+        if (null!=request.getContentType() && !request.getContentType().contains("application/json")) {
             return;
         }
         BufferedReader bufferedReader = null;
