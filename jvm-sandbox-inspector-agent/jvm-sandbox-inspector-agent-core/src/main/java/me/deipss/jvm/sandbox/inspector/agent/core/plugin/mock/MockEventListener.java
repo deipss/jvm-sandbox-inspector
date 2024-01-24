@@ -2,6 +2,7 @@ package me.deipss.jvm.sandbox.inspector.agent.core.plugin.mock;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.jvm.sandbox.api.event.Event;
+import com.alibaba.jvm.sandbox.api.filter.Filter;
 import com.alibaba.jvm.sandbox.api.listener.EventListener;
 import com.alibaba.jvm.sandbox.api.resource.LoadedClassDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class MockEventListener implements EventListener {
             }
 
             if (mockManageRequest.getMockType().equals(MockType.RETURN_BEFORE_EXE)) {
-                Set<Class<?>> classes = loadedClassDataSource.find();
+                Set<Class<?>> classes = loadedClassDataSource.find(new MockClassFilter(mockManageRequest.getReturnClassCanonicalName()));
                 if(!classes.isEmpty()) {
                     Class<?> next = classes.iterator().next();
                     Object o = JSON.parseObject(mockManageRequest.getMockResponseJson(), next);
