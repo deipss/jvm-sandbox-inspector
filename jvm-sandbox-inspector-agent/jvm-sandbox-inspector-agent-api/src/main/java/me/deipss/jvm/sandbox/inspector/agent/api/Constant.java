@@ -10,4 +10,16 @@ public class Constant {
     public static final String ROCKET_MQ_CONSUMER = "ROCKET_MQ_CONSUMER";
     public static final String JDBC = "JDBC";
     public static final String HTTP = "HTTP";
+
+    public static final String[] PLUGIN_CLASS_PATTERN_FOR_PARENT = new String[]{
+            "^org.slf4j..*",
+            "^ch.qos.logback..*",
+            "^org.apache.commons..*"
+    };
+
+
+    public static final String[] PLUGIN_CLASS_PATTERN_FOR_BIZ = new String[]{
+            "^org.apache.dubbo..*","^javax.servlet..*"
+    };
+
 }

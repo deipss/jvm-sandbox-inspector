@@ -36,5 +36,6 @@ public class MockManageRequest implements Serializable {
         private String [] parameterTypes;
         private String exceptionClassCanonicalName;
         private String returnClassCanonicalName;
+
     }
 }

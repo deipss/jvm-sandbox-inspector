@@ -27,9 +27,13 @@ public class GlobalConfig implements Serializable {
     private String dataSendUrl;
 
     /**
+     * plugin jar 包的绝对路径
+     */
+    private String pluginsPath;
+
+    /**
      * 启用的插件
      */
     private List<String> enablePlugins;
-
 
 }

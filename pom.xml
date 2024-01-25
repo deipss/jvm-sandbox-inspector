@@ -39,6 +39,7 @@
         <org.slf4j.version>1.7.24</org.slf4j.version>
         <logback.version>1.2.1</logback.version>
         <httpclient.version>4.5.13</httpclient.version>
+        <metainf-services.version>1.8</metainf-services.version>
     </properties>
 
     <dependencyManagement>
@@ -82,6 +83,11 @@
             <dependency>
                 <groupId>me.deipss</groupId>
                 <artifactId>jvm-sandbox-inspector-agent-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>me.deipss</groupId>
+                <artifactId>jvm-sandbox-inspector-agent-plugins</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!--spring-->
@@ -322,6 +328,12 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+            <version>${metainf-services.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

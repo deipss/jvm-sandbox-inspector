@@ -10,7 +10,7 @@ public interface MockManageService {
 
 
 
-    int stop(int mockId);
+    int stop(Integer mockId);
 
     int addAll(List<MockManageRequest.Inner> request);
 

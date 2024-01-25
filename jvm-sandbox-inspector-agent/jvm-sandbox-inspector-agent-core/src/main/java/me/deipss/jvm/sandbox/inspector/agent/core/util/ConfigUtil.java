@@ -32,7 +32,12 @@ public class ConfigUtil {
         return config.getDataSendUrl();
     }
 
+    public static String getPluginsFilePath(){
+        return config.getPluginsPath();
+    }
+
     public static List<String> getEnablePlugins() {
         return config.getEnablePlugins();
     }
+
 }

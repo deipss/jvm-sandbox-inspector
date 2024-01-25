@@ -28,6 +28,6 @@ public class TtlConcurrentListener extends AdviceListener{
         if (parameter0Type.isAssignableFrom(Callable.class)) {
             parameterArray[0] = TtlCallable.get((Callable) parameterArray[0]);
         }
-        log.info("ttl wrapper success");
+//        log.info("ttl wrapper success");
     }
 }

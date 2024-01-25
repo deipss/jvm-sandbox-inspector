@@ -9,6 +9,7 @@ import com.alibaba.jvm.sandbox.api.resource.ConfigInfo;
 import com.alibaba.jvm.sandbox.api.resource.LoadedClassDataSource;
 import com.alibaba.jvm.sandbox.api.resource.ModuleEventWatcher;
 import com.alibaba.jvm.sandbox.api.resource.ModuleManager;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.Constant;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageRequest;
@@ -16,24 +17,27 @@ import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageResponse;
 import me.deipss.jvm.sandbox.inspector.agent.api.service.HeartBeatService;
 import me.deipss.jvm.sandbox.inspector.agent.api.service.InvocationSendService;
 import me.deipss.jvm.sandbox.inspector.agent.api.service.MockManageService;
+import me.deipss.jvm.sandbox.inspector.agent.api.spi.InspectorPlugin;
+import me.deipss.jvm.sandbox.inspector.agent.core.classloader.PluginClassLoader;
 import me.deipss.jvm.sandbox.inspector.agent.core.impl.HeartBeatServiceImpl;
 import me.deipss.jvm.sandbox.inspector.agent.core.impl.InvocationSendServiceImpl;
 import me.deipss.jvm.sandbox.inspector.agent.core.impl.MockManageServiceImpl;
 import me.deipss.jvm.sandbox.inspector.agent.core.plugin.concurrent.TtlConcurrentPlugin;
-import me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo.DubboConsumerPlugin;
-import me.deipss.jvm.sandbox.inspector.agent.core.plugin.dubbo.DubboProviderPlugin;
-import me.deipss.jvm.sandbox.inspector.agent.core.plugin.http.HttpPlugin;
-import me.deipss.jvm.sandbox.inspector.agent.core.plugin.jdbc.JdbcPlugin;
-import me.deipss.jvm.sandbox.inspector.agent.core.plugin.rocket.RocketMqConsumerPlugin;
-import me.deipss.jvm.sandbox.inspector.agent.core.plugin.rocket.RocketMqSendPlugin;
+import me.deipss.jvm.sandbox.inspector.agent.core.util.ConfigUtil;
+import me.deipss.jvm.sandbox.inspector.agent.core.util.LogbackUtils;
 import org.kohsuke.MetaInfServices;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 @MetaInfServices(Module.class)
@@ -42,16 +46,12 @@ import java.util.stream.Collectors;
 public class InspectorModule implements Module, ModuleLifecycle {
     @Resource
     private ModuleEventWatcher moduleEventWatcher;
-
     @Resource
     private ConfigInfo configInfo;
-
     @Resource
     private ModuleManager moduleManager;
-
     @Resource
     private LoadedClassDataSource loadedClassDataSource;
-
     private MockManageService mockManageService;
     private HeartBeatService heartBeatService;
     private InvocationSendService invocationSend;
@@ -59,49 +59,57 @@ public class InspectorModule implements Module, ModuleLifecycle {
 
     @Override
     public void onLoad() throws Throwable {
-
+        LogbackUtils.init();
+        log.info("module={},logback initialize，mode={}", Constant.moduleId, configInfo.getMode());
     }
 
     @Override
     public void onUnload() throws Throwable {
+        log.info("module={},onUnload ", Constant.moduleId);
 
     }
 
     @Override
     public void onActive() throws Throwable {
+        log.info("module={},onActive ", Constant.moduleId);
 
     }
 
     @Override
     public void onFrozen() throws Throwable {
+        log.info("module={},onFrozen ", Constant.moduleId);
+
     }
 
     @Override
     public void loadCompleted() {
-        invocationSend = new InvocationSendServiceImpl();
 
-        JdbcPlugin jdbcPlugin = new JdbcPlugin(invocationSend);
-        jdbcPlugin.watch(moduleEventWatcher);
+        invocationSend = new InvocationSendServiceImpl();
+        URL url;
+        try {
+            url = new File(ConfigUtil.getPluginsFilePath()).toURI().toURL();
+            log.info("plugin file url ={}", url);
+
+            PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, this.getClass().getClassLoader(), loadedClassDataSource);
+            List<InspectorPlugin> inspectorPlugins = loadInspectorPluginBySPI(pluginClassLoader);
+            for (InspectorPlugin inspectorPlugin : inspectorPlugins) {
+                if (inspectorPlugin.enable(ConfigUtil.getEnablePlugins())) {
+                    inspectorPlugin.watch(moduleEventWatcher, invocationSend);
+                    log.info("enable plugin ={}", inspectorPlugin.identify());
+                } else {
+                    log.info("not enable plugin ={}", inspectorPlugin.identify());
+                }
+            }
+        } catch (Exception e) {
+            log.error("URL new error,url={}", ConfigUtil.getPluginsFilePath(), e);
+            throw new RuntimeException(e);
+        }
+
 
         TtlConcurrentPlugin ttlConcurrentPlugin = new TtlConcurrentPlugin();
         ttlConcurrentPlugin.watch(moduleEventWatcher);
 
-        DubboConsumerPlugin dubboConsumerPlugin = new DubboConsumerPlugin(invocationSend);
-        dubboConsumerPlugin.watch(moduleEventWatcher);
-
-        DubboProviderPlugin dubboProviderPlugin = new DubboProviderPlugin(invocationSend);
-        dubboProviderPlugin.watch(moduleEventWatcher);
-
-        HttpPlugin httpPlugin = new HttpPlugin(invocationSend);
-        httpPlugin.watch(moduleEventWatcher);
-
-        RocketMqConsumerPlugin rocketMqConsumerPlugin = new RocketMqConsumerPlugin(invocationSend);
-        rocketMqConsumerPlugin.watch(moduleEventWatcher);
-
-        RocketMqSendPlugin rocketMqSendPlugin = new RocketMqSendPlugin(invocationSend);
-        rocketMqSendPlugin.watch(moduleEventWatcher);
-
-        mockManageService = new MockManageServiceImpl(moduleEventWatcher);
+        mockManageService = new MockManageServiceImpl(moduleEventWatcher,loadedClassDataSource);
         heartBeatService = new HeartBeatServiceImpl();
         heartBeatService.start();
     }
@@ -115,6 +123,7 @@ public class InspectorModule implements Module, ModuleLifecycle {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        log.info("manageMock receipt body={}",body );
         MockManageRequest mock = JSON.parseObject(body, MockManageRequest.class);
         switch (mock.getOperate()) {
             case VIEW:
@@ -147,10 +156,26 @@ public class InspectorModule implements Module, ModuleLifecycle {
         response.setContentType("application/json;charset=UTF-8");
 //        ServletOutputStream out = null;
         try (PrintWriter writer = response.getWriter()) {
+            log.info("write to web client ,result ={}",result );
             writer.write(JSON.toJSONString(result));
             writer.flush();
         } catch (IOException ex) {
             log.error(ex.getMessage());
         }
+    }
+
+
+    private List<InspectorPlugin> loadInspectorPluginBySPI(ClassLoader classLoader) {
+        ServiceLoader<InspectorPlugin> loaded = ServiceLoader.load(InspectorPlugin.class, classLoader);
+        Iterator<InspectorPlugin> spiIterator = loaded.iterator();
+        List<InspectorPlugin> target = Lists.newArrayList();
+        while (spiIterator.hasNext()) {
+            try {
+                target.add(spiIterator.next());
+            } catch (Throwable e) {
+                log.error("Error load spi InspectorPlugin={} ", classLoader.getClass().getCanonicalName(), e);
+            }
+        }
+        return target;
     }
 }

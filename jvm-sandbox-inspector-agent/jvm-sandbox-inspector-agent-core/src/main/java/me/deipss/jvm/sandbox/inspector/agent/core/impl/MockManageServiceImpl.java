@@ -2,7 +2,10 @@ package me.deipss.jvm.sandbox.inspector.agent.core.impl;
 
 import com.alibaba.jvm.sandbox.api.event.Event;
 import com.alibaba.jvm.sandbox.api.listener.ext.EventWatchBuilder;
+import com.alibaba.jvm.sandbox.api.listener.ext.EventWatcher;
+import com.alibaba.jvm.sandbox.api.resource.LoadedClassDataSource;
 import com.alibaba.jvm.sandbox.api.resource.ModuleEventWatcher;
+import lombok.extern.slf4j.Slf4j;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageRequest;
 import me.deipss.jvm.sandbox.inspector.agent.api.domain.MockManageResponse;
 import me.deipss.jvm.sandbox.inspector.agent.api.service.MockManageService;
@@ -11,20 +14,32 @@ import me.deipss.jvm.sandbox.inspector.agent.core.plugin.mock.MockEventListener;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class MockManageServiceImpl implements MockManageService {
 
-    private ConcurrentHashMap<Integer,MockManageRequest.Inner> mockMap;
+    private ConcurrentHashMap<Integer , MockManageRequest.Inner> mockMap;
 
     private ModuleEventWatcher moduleEventWatcher;
 
-    public MockManageServiceImpl(ModuleEventWatcher moduleEventWatcher) {
+    private LoadedClassDataSource loadedClassDataSource;
+
+    public MockManageServiceImpl(ModuleEventWatcher moduleEventWatcher,LoadedClassDataSource loadedClassDataSource) {
         this.moduleEventWatcher = moduleEventWatcher;
+        this.loadedClassDataSource = loadedClassDataSource;
         mockMap = new ConcurrentHashMap<>(8);
     }
 
+
     @Override
-    public int stop(int mockId) {
-        moduleEventWatcher.delete(mockId);
+    public int stop(Integer mockId) {
+        if (mockMap.containsKey(mockId)) {
+            moduleEventWatcher.delete(mockId);
+            mockMap.remove(mockId);
+            log.info("delete mock id ={}", mockId);
+        } else {
+            log.info("mockMap not contain {}", mockId);
+
+        }
         return 1;
     }
 
@@ -32,20 +47,16 @@ public class MockManageServiceImpl implements MockManageService {
 
         EventWatchBuilder.IBuildingForClass iBuildingForClass = new EventWatchBuilder(moduleEventWatcher)
                 .onClass(request.getMockClass()).includeBootstrap();
-        if(request.isIncludeSubClass()) {
-            iBuildingForClass
-                    .includeSubClasses();
+        if (request.isIncludeSubClass()) {
+            iBuildingForClass.includeSubClasses();
         }
         EventWatchBuilder.IBuildingForBehavior iBuildingForBehavior = iBuildingForClass.onBehavior(request.getMockMethod());
-        if(null!=request.getParameterTypes()) {
+        if (null != request.getParameterTypes()) {
             iBuildingForBehavior.withParameterTypes(request.getParameterTypes());
-
         }
-        iBuildingForBehavior.onWatch(new MockEventListener(request){
-
-        }, Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
-
-
+        EventWatcher eventWatcher = iBuildingForBehavior.onWatch(new MockEventListener(request,loadedClassDataSource), Event.Type.BEFORE, Event.Type.RETURN, Event.Type.THROWS);
+        mockMap.put(eventWatcher.getWatchId(), request);
+        log.info("add mock ,watchId={}", eventWatcher.getWatchId());
         return 1;
     }
 
