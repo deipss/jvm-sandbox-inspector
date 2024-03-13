@@ -11,6 +11,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Data
 public class MockManageResponse implements Serializable {
+
     private static final long serialVersionUID = -1L;
 
     private Map<Integer,MockManageRequest.Inner> mockMap;

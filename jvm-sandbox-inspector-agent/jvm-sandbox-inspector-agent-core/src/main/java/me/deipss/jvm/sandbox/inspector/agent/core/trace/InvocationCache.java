@@ -11,7 +11,7 @@ public class InvocationCache {
 
     private static final LoadingCache<Integer, Invocation> innerMap = CacheBuilder
             .newBuilder()
-            .maximumSize(4096)
+            .maximumSize(1<<12)
             .expireAfterWrite(30, TimeUnit.SECONDS)
             .build(new CacheLoader<Integer, Invocation>() {
                 @Override

@@ -7,16 +7,11 @@ import java.util.List;
 
 public interface MockManageService {
 
-
-
-
     int stop(Integer mockId);
 
     int addAll(List<MockManageRequest.Inner> request);
 
     MockManageResponse view();
-
-
 
 
 }

@@ -49,7 +49,7 @@ public class DubboProviderEventListener extends BaseEventListener {
             invocation.setRpcContext(new HashMap<>(attachments.size()));
             invocation.getRpcContext().putAll(attachments);
             invocation.setMethodName(MethodUtils.invokeMethod(args, "getMethodName").toString());
-            String interfaceName = ((Class) MethodUtils.invokeMethod(invoker, "getInterface")).getCanonicalName();
+            String interfaceName = ((Class<?>) MethodUtils.invokeMethod(invoker, "getInterface")).getCanonicalName();
             invocation.setClassName(interfaceName);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             log.error("dubbo consumer assembleRequest error", e);

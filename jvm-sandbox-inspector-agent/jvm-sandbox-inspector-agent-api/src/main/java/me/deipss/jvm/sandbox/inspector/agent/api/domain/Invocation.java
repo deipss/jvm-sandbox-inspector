@@ -37,6 +37,9 @@ public class Invocation implements Serializable {
 
     /**
      * @see com.alibaba.jvm.sandbox.api.event.InvokeEvent#invokeId
+     * 某个机器的调用ID
+     * 不同机器的会重复：如机器A的调用ID=112，机器B的调用ID=112
+     * 同一机器重启后，会重复：如机器A重启前=112，重启后会从1增长到112
      */
     private int invokeId;
 
@@ -129,6 +132,9 @@ public class Invocation implements Serializable {
     private String ip;
 
 
+    /**
+     * http 端口
+     */
     private int httpPort;
 
     /**
@@ -164,10 +170,19 @@ public class Invocation implements Serializable {
     private Map<String, String[]> httpParameters;
 
 
+    /**
+     * 请求体
+     */
     private transient Object[] request;
 
+    /**
+     * 返回值
+     */
     private transient Object response;
 
+    /**
+     * 异常
+     */
     private transient Throwable throwable;
 
 

@@ -66,13 +66,11 @@ public class InspectorModule implements Module, ModuleLifecycle {
     @Override
     public void onUnload() throws Throwable {
         log.info("module={},onUnload ", Constant.moduleId);
-
     }
 
     @Override
     public void onActive() throws Throwable {
         log.info("module={},onActive ", Constant.moduleId);
-
     }
 
     @Override
@@ -83,13 +81,11 @@ public class InspectorModule implements Module, ModuleLifecycle {
 
     @Override
     public void loadCompleted() {
-
         invocationSend = new InvocationSendServiceImpl();
         URL url;
         try {
             url = new File(ConfigUtil.getPluginsFilePath()).toURI().toURL();
             log.info("plugin file url ={}", url);
-
             PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, this.getClass().getClassLoader(), loadedClassDataSource);
             List<InspectorPlugin> inspectorPlugins = loadInspectorPluginBySPI(pluginClassLoader);
             for (InspectorPlugin inspectorPlugin : inspectorPlugins) {

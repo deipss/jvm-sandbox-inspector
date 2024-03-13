@@ -15,6 +15,7 @@ public class ConfigUtil {
     static {
         InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("global_config.json");
         try {
+            assert resourceAsStream != null;
             config = JSON.parseObject(resourceAsStream, GlobalConfig.class);
             log.info("global_config init success, config={}",config.toString());
         } catch (IOException e) {

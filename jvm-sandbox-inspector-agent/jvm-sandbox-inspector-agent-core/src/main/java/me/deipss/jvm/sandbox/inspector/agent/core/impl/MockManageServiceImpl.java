@@ -17,11 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class MockManageServiceImpl implements MockManageService {
 
-    private ConcurrentHashMap<Integer , MockManageRequest.Inner> mockMap;
+    private final ConcurrentHashMap<Integer , MockManageRequest.Inner> mockMap;
 
-    private ModuleEventWatcher moduleEventWatcher;
+    private final ModuleEventWatcher moduleEventWatcher;
 
-    private LoadedClassDataSource loadedClassDataSource;
+    private final LoadedClassDataSource loadedClassDataSource;
 
     public MockManageServiceImpl(ModuleEventWatcher moduleEventWatcher,LoadedClassDataSource loadedClassDataSource) {
         this.moduleEventWatcher = moduleEventWatcher;
@@ -76,6 +76,5 @@ public class MockManageServiceImpl implements MockManageService {
         mockManageResponse.setMockMap(mockMap);
         return mockManageResponse;
     }
-
 
 }

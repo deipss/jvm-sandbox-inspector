@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class HeartBeatServiceImpl implements HeartBeatService {
 
-    private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
+    private final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
             new BasicThreadFactory.Builder().namingPattern("heartbeat-pool-%d").daemon(true).build());
 
 
